@@ -1,19 +1,22 @@
 import random
 
-a = 1
-b = 5
+a = 5
+b = 9
 a_voitot = 0
 b_voitot= 0 
 
 def get_random_number(skill_number):
-    number = pow(((skill_number/100)*random.uniform(0, 1)),4)
+    number = (10 + pow((skill_number/30),4) ) * random.randint(1, 100)
 
     return number
 
 
-pelimaara= 10
+pelimaara= 1000000
 for i in range(pelimaara):
-    if get_random_number(a) > get_random_number(b):
+    a_number =  get_random_number(a)
+    b_number = get_random_number(b)
+    #print(f"a: {a_number} vs b: {b_number}")
+    if a_number > b_number:
         a_voitot +=1
     else:
         b_voitot +=1
