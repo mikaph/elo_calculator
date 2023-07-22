@@ -11,6 +11,10 @@ class Player:
     
 K_FACTOR = 40
 
+
+
+
+
 def get_new_elos(winner: Player, loser: Player):
     expected_score = 1/(10**((winner.elo - loser.elo) / 400) + 1)
     winner_new_elo = round(winner.elo + (1 - expected_score)*K_FACTOR)
