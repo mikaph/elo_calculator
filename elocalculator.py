@@ -22,11 +22,7 @@ class Player:
 
 
 def set_new_elos(winner: Player, loser: Player):
-    expected_score = 1/(10**((winner.elo - loser.elo) / 400) + 1)
-    winner_new_elo = (winner.elo + (1 - expected_score)*K_FACTOR)
-    loser_new_elo = (loser.elo + (0 - expected_score)*K_FACTOR)
-    logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
-    logger.debug(f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
+    winner_new_elo, loser_new_elo = get_new_elos(winner, loser)
     winner.change_elo(winner_new_elo)
     loser.change_elo(loser_new_elo)
 
@@ -36,7 +32,8 @@ def get_new_elos(winner: Player, loser: Player):
     winner_new_elo = (winner.elo + (1 - expected_score)*K_FACTOR)
     loser_new_elo = (loser.elo + (0 - expected_score)*K_FACTOR)
     logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
-    logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
+    logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} "
+                 f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
     return winner_new_elo, loser_new_elo
 
 
