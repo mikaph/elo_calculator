@@ -1,8 +1,6 @@
 import unittest
 import random
-from elocalculator import Player, get_new_elos, set_new_elos, get_expected_score
-
-elos_to_test = [-2000, -100, -20, 1, 0, 1, 10, 100, 2000]
+from elocalculator import Player, get_new_elos, set_new_elos
 
 
 class TestEloAlgorithm(unittest.TestCase):
@@ -11,7 +9,7 @@ class TestEloAlgorithm(unittest.TestCase):
         """
         winner should get elo and loser should lose elo
         """
-
+        elos_to_test = [-2000, -100, -20, 1, 0, 1, 10, 100, 2000]
 
         for loser_old_elo in elos_to_test:
             for winner_old_elo in elos_to_test:
@@ -64,18 +62,17 @@ class TestEloAlgorithm(unittest.TestCase):
         """
         NUM_GAMES_PER_PLAYER = 3000
 
-        def simulate_game(player, opponent):
-            player_skill_roll = 0
-            opponent_skill_roll = 0
+        def simulate_game(p1, p2):
+            p1_skill_roll = 0
+            p2_skill_roll = 0
 
-            while(player_skill_roll == opponent_skill_roll):
-                player_skill_roll = random.randint(0, 10) + player.skill
-                opponent_skill_roll = random.randint(0, 10) + opponent.skill
-            if player_skill_roll > opponent_skill_roll:
-                return player, opponent
+            while p1_skill_roll == p2_skill_roll:
+                p1_skill_roll = random.randint(0, 10) + p1.skill
+                p2_skill_roll = random.randint(0, 10) + p2.skill
+            if p1_skill_roll > p2_skill_roll:
+                return p1, p2
             else:
-                return opponent, player
-
+                return p2, p1
 
         players_list = [Player(name=str(x), skill=x, elo=1000) for x in range(10)]
         print(players_list)
@@ -100,6 +97,7 @@ class TestEloAlgorithm(unittest.TestCase):
         average_elo = sum([x.elo for x in players_list])/len(players_list)
         self.assertAlmostEqual(1000, average_elo, delta=100)
         print(f"average elo: {average_elo}")
+
 
 if __name__ == '__main__':
     unittest.main()
