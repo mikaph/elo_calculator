@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+import logging
+
+logger = logging.getLogger("Elocalculator")
+logging.basicConfig(level=logging.INFO)
 
 K_FACTOR = 40
 
@@ -21,8 +25,8 @@ def set_new_elos(winner: Player, loser: Player):
     expected_score = 1/(10**((winner.elo - loser.elo) / 400) + 1)
     winner_new_elo = (winner.elo + (1 - expected_score)*K_FACTOR)
     loser_new_elo = (loser.elo + (0 - expected_score)*K_FACTOR)
-    print(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
-    print(f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
+    logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
+    logger.debug(f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
     winner.change_elo(winner_new_elo)
     loser.change_elo(loser_new_elo)
 
@@ -31,8 +35,8 @@ def get_new_elos(winner: Player, loser: Player):
     expected_score = 1/(10**((winner.elo - loser.elo) / 400) + 1)
     winner_new_elo = (winner.elo + (1 - expected_score)*K_FACTOR)
     loser_new_elo = (loser.elo + (0 - expected_score)*K_FACTOR)
-    #print(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
-    #print(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
+    logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
+    logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
     return winner_new_elo, loser_new_elo
 
 
@@ -44,7 +48,7 @@ if __name__ == "__main__":
         for line in games_in:
             if line.startswith('*'):
                 reading_initial_values = False
-                #print(f"initial values:")
+                print(f"initial values:")
                 for player in players.values():
                     print(player)
                 continue
