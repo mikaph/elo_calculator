@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger("Elocalculator")
 logging.basicConfig(level=logging.INFO)
 
-K_FACTOR = 40
+K_FACTOR = 50 # Maximum elo change per game
 
 
 @dataclass
@@ -26,11 +26,13 @@ def set_new_elos(winner: Player, loser: Player):
     winner.change_elo(winner_new_elo)
     loser.change_elo(loser_new_elo)
 
+def get_expected_score(winner_elo: int, loser_elo: int):
+    return 1/(1 + (10**((loser_elo - winner_elo)/400)))
 
 def get_new_elos(winner: Player, loser: Player):
-    expected_score = 1/(10**((winner.elo - loser.elo) / 400) + 1)
-    winner_new_elo = (winner.elo + (1 - expected_score)*K_FACTOR)
-    loser_new_elo = (loser.elo + (0 - expected_score)*K_FACTOR)
+    expected_score = get_expected_score(winner.elo, loser.elo)
+    winner_new_elo = round(winner.elo + (1 - expected_score)*K_FACTOR)
+    loser_new_elo = round(loser.elo + (0 - 1 + expected_score)*K_FACTOR)
     logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
     logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} "
                  f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
@@ -67,3 +69,4 @@ if __name__ == "__main__":
         top_list.reverse()
         for player in top_list:
             print(player)
+
