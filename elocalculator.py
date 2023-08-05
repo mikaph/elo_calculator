@@ -4,15 +4,24 @@ import logging
 logger = logging.getLogger("Elocalculator")
 logging.basicConfig(level=logging.INFO)
 
-K_FACTOR = 50 # Maximum elo change per game
+K_FACTOR = 50  # Maximum elo change per game
 
 
 @dataclass
 class Player:
     name: str
     elo: int = 1000
+
+    # for debug / testing
     skill: int = 0
     played_games: int = 0
+    won_games: int = 0
+
+    def __str__(self):
+        if self.played_games:
+            return f"{self.name} ({self.elo}) {round(100*(self.won_games/self.played_games))}% winrate"
+        else:
+            return f"{self.name} ({self.elo})"
 
     def __lt__(self, other):
         return self.elo < other.elo
@@ -26,8 +35,10 @@ def set_new_elos(winner: Player, loser: Player):
     winner.change_elo(winner_new_elo)
     loser.change_elo(loser_new_elo)
 
+
 def get_expected_score(winner_elo: int, loser_elo: int):
     return 1/(1 + (10**((loser_elo - winner_elo)/400)))
+
 
 def get_new_elos(winner: Player, loser: Player):
     expected_score = get_expected_score(winner.elo, loser.elo)
@@ -69,4 +80,3 @@ if __name__ == "__main__":
         top_list.reverse()
         for player in top_list:
             print(player)
-
