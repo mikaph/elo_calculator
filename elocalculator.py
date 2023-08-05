@@ -1,23 +1,20 @@
 from dataclasses import dataclass
-from math import floor
-
-@dataclass
-class Player:
-    elo: int
-    name:str
-    skill: int
-    played_games = 0
-    def __lt__(self, other):
-     return self.elo < other.elo
-
-    def change_elo(self,new_elo):
-        self.elo = new_elo
-
-
 
 K_FACTOR = 40
 
 
+@dataclass
+class Player:
+    name: str
+    elo: int = 1000
+    skill: int = 0
+    played_games: int = 0
+
+    def __lt__(self, other):
+        return self.elo < other.elo
+
+    def change_elo(self, new_elo):
+        self.elo = new_elo
 
 
 def set_new_elos(winner: Player, loser: Player):
@@ -30,16 +27,13 @@ def set_new_elos(winner: Player, loser: Player):
     loser.change_elo(loser_new_elo)
 
 
-
-
 def get_new_elos(winner: Player, loser: Player):
     expected_score = 1/(10**((winner.elo - loser.elo) / 400) + 1)
     winner_new_elo = (winner.elo + (1 - expected_score)*K_FACTOR)
     loser_new_elo = (loser.elo + (0 - expected_score)*K_FACTOR)
     #print(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
     #print(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
-    return (winner_new_elo, loser_new_elo)
-
+    return winner_new_elo, loser_new_elo
 
 
 if __name__ == "__main__":
@@ -72,4 +66,3 @@ if __name__ == "__main__":
         top_list.reverse()
         for player in top_list:
             print(player)
-
