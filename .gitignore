@@ -1,4 +1,5 @@
 .DS_Store
 node_modules
 .env
-backend/__pycache__
+*pycache*
+.idea
