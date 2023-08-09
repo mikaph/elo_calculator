@@ -19,10 +19,19 @@ function App() {
     }), [prefersDarkMode])
 
     const [playerData, setPlayerData] = useState([])
-    const [sport, setSport] = useState('Ping pong') // eslint-disable-line no-unused-vars
+    const [sport, setSport] = useState('Ping pong')
+    const [sportList, setSportList] = useState(['Ping pong'])
 
     useEffect(() => {
-        fetch(`/leaderboard/${sport}`).then((res) => {
+        fetch('/sports').then((res) => {
+            res.json().then((d) => {
+                const arr = d.sort()
+                setSportList(arr)
+            })
+        })
+
+        const sportString = sport.toLowerCase().split(' ').join('_')
+        fetch(`/leaderboard/${sportString}`).then((res) => {
             res.json().then((d) => {
                 setPlayerData(d)
             })
@@ -35,7 +44,11 @@ function App() {
             <Container maxWidth="lg">
                 <Grid container direction="column">
                     <Grid item xs={12} my={2}>
-                        <ButtonAppBar sport={sport} />
+                        <ButtonAppBar
+                            sport={sport}
+                            sportList={sportList}
+                            setSport={setSport}
+                        />
                     </Grid>
                     <Grid item xs={12} my={2}>
                         <Leaderboard rows={playerData} />

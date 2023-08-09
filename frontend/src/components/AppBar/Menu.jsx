@@ -5,11 +5,9 @@ import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 const options = [
-    'Add game',
     'View leaderboard',
-    'View recent games',
+    'Add game',
     'Add players',
-    'Change sport',
     'Add sport'
 ]
 
@@ -18,9 +16,11 @@ const ITEM_HEIGHT = 60
 export default function LongMenu() {
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
+
     const handleClose = () => {
         setAnchorEl(null)
     }
@@ -53,7 +53,7 @@ export default function LongMenu() {
                 }}
             >
                 {options.map((option) => (
-                    <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                    <MenuItem key={option} onClick={handleClose}>
                         {option}
                     </MenuItem>
                 ))}

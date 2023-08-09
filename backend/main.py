@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from data_types import PlayerData
+import helpers
 
 app = FastAPI()
 
@@ -8,13 +9,9 @@ async def hello():
     return {"message": "Hello Ping Pong players"}
 
 @app.get("/leaderboard/{sport_name}")
-async def get_leaderboard(sport_name: str) -> list[PlayerData] | list[None]:
-    if sport_name == "Ping pong":
-        ret = [
-            PlayerData(name="Tommi", elo=2000, wins=10, losses=2),
-            PlayerData(name="Mika", elo=2500, wins=13, losses=2)
-        ]
-    else:
-        ret = []
+async def get_leaderboard(sport_name: str) -> list[PlayerData]:
+    return helpers.get_statistics(sport_name)
 
-    return ret
+@app.get("/sports")
+async def get_leaderboard() -> list[str]:
+    return helpers.get_sports()

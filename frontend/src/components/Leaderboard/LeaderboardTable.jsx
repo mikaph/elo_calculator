@@ -8,6 +8,10 @@ import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 
 export default function LeaderboardTable({ rows }) {
+    if (!rows) {
+        return null
+    }
+
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -28,14 +32,10 @@ export default function LeaderboardTable({ rows }) {
                                 {row.name}
                             </TableCell>
                             <TableCell align="right">{row.elo}</TableCell>
-                            <TableCell align="right">{Math.round(100 * (row.wins / (row.wins + row.losses)))}</TableCell>
-                            <TableCell align="right">
-                                {row.wins}
-                                -
-                                {row.losses}
-                            </TableCell>
-                            <TableCell align="right">TBD</TableCell>
-                            <TableCell align="right">TBD</TableCell>
+                            <TableCell align="right">{row.winpercent}</TableCell>
+                            <TableCell align="right">{row.winloss}</TableCell>
+                            <TableCell align="right">{row.last10winpercent}</TableCell>
+                            <TableCell align="right">{row.last10winloss}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
