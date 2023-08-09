@@ -5,9 +5,11 @@ import CssBaseline from '@mui/material/CssBaseline'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import createTheme from '@mui/material/styles/createTheme'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import ButtonAppBar from './components/AppBar'
 import Leaderboard from './components/Leaderboard'
 import baseTheme from './theme'
+import RecentGames from './components/RecentGames'
 
 function App() {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
@@ -20,7 +22,7 @@ function App() {
 
     const [playerData, setPlayerData] = useState([])
     const [sport, setSport] = useState('Ping pong')
-    const [sportList, setSportList] = useState(['Ping pong'])
+    const [sportList, setSportList] = useState([])
 
     useEffect(() => {
         fetch('/sports').then((res) => {
@@ -51,8 +53,11 @@ function App() {
                         />
                     </Grid>
                     <Grid item xs={12} my={2}>
-                        <Leaderboard rows={playerData} />
-                        {/* Other routes here? Or hide/show? */}
+                        <Routes>
+                            <Route path="*" element={<Navigate to="/leaderboard" replace />} />
+                            <Route path="/leaderboard" element={<Leaderboard rows={playerData} />} />
+                            <Route path="/recent_games" element={<RecentGames />} />
+                        </Routes>
                     </Grid>
                 </Grid>
             </Container>

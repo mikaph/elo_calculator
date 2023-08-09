@@ -18,10 +18,16 @@ def get_statistics(sport_name: str) -> list[PlayerData]:
                 elo = r["elo"]
                 wins = int(r["wins"])
                 losses = int(r["losses"])
-                winpercent = round(wins / (wins + losses) * 100, 1)
+                if (losses == 0):
+                    winpercent = 100
+                else:
+                    winpercent = round(wins / (wins + losses) * 100, 1)
                 winloss = f"{wins}-{losses}"
                 last10games = get_last_10(r["last10"])
-                last10winpercent = round(last10games[0] / (last10games[0] + last10games[1]) * 100, 1)
+                if (last10games[1] == 0):
+                    last10winpercent = 100
+                else:
+                    last10winpercent = round(last10games[0] / (last10games[0] + last10games[1]) * 100, 1)
                 last10winloss = f"{last10games[0]}-{last10games[1]}"
                 ret.append(PlayerData(
                     name=name,

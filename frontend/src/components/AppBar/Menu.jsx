@@ -3,17 +3,20 @@ import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-
-const options = [
-    'View leaderboard',
-    'Add game',
-    'Add players',
-    'Add sport'
-]
+import { useNavigate } from 'react-router-dom'
+import AddPlayersModal from './Modals/AddPlayersModal'
+import AddResultModal from './Modals/AddResultModal'
+import AddSportModal from './Modals/AddSportModal'
 
 const ITEM_HEIGHT = 60
 
 export default function LongMenu() {
+    const navigate = useNavigate()
+
+    const [addPlayerModalOpen, setAddPlayerModalOpen] = React.useState(false)
+    const [addResultModalOpen, setAddResultModalOpen] = React.useState(false)
+    const [addSportModalOpen, setAddSportModalOpen] = React.useState(false)
+
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
 
@@ -21,8 +24,21 @@ export default function LongMenu() {
         setAnchorEl(event.currentTarget)
     }
 
-    const handleClose = () => {
+    const handleClose = (event) => {
         setAnchorEl(null)
+        if (event.target.innerText) {
+            if (event.target.innerText === 'Add players') {
+                setAddPlayerModalOpen(true)
+            } else if (event.target.innerText === 'Add result') {
+                setAddResultModalOpen(true)
+            } else if (event.target.innerText === 'Add sport') {
+                setAddSportModalOpen(true)
+            } else if (event.target.innerText === 'View leaderboard') {
+                navigate('/leaderboard')
+            } else if (event.target.innerText === 'View recent games') {
+                navigate('/recent_games')
+            }
+        }
     }
 
     return (
@@ -52,12 +68,15 @@ export default function LongMenu() {
                     }
                 }}
             >
-                {options.map((option) => (
-                    <MenuItem key={option} onClick={handleClose}>
-                        {option}
-                    </MenuItem>
-                ))}
+                <MenuItem onClick={handleClose}>View leaderboard</MenuItem>
+                <MenuItem onClick={handleClose}>View recent games</MenuItem>
+                <MenuItem onClick={handleClose}>Add result</MenuItem>
+                <MenuItem onClick={handleClose}>Add players</MenuItem>
+                <MenuItem onClick={handleClose}>Add sport</MenuItem>
             </Menu>
+            <AddPlayersModal open={addPlayerModalOpen} setOpen={setAddPlayerModalOpen} />
+            <AddResultModal open={addResultModalOpen} setOpen={setAddResultModalOpen} />
+            <AddSportModal open={addSportModalOpen} setOpen={setAddSportModalOpen} />
         </div>
     )
 }

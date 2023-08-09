@@ -7,7 +7,6 @@ import LongMenu from './Menu'
 import BasicMenu from './SportMenu'
 
 export default function ButtonAppBar({ sport, sportList, setSport }) {
-    console.log(sport)
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
