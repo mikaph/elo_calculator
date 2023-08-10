@@ -4,7 +4,6 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useNavigate } from 'react-router-dom'
-import AddPlayersModal from './Modals/AddPlayersModal'
 import AddResultModal from './Modals/AddResultModal'
 import AddSportModal from './Modals/AddSportModal'
 
@@ -13,7 +12,6 @@ const ITEM_HEIGHT = 60
 export default function LongMenu() {
     const navigate = useNavigate()
 
-    const [addPlayerModalOpen, setAddPlayerModalOpen] = React.useState(false)
     const [addResultModalOpen, setAddResultModalOpen] = React.useState(false)
     const [addSportModalOpen, setAddSportModalOpen] = React.useState(false)
 
@@ -27,9 +25,7 @@ export default function LongMenu() {
     const handleClose = (event) => {
         setAnchorEl(null)
         if (event.target.innerText) {
-            if (event.target.innerText === 'Add players') {
-                setAddPlayerModalOpen(true)
-            } else if (event.target.innerText === 'Add result') {
+            if (event.target.innerText === 'Add result') {
                 setAddResultModalOpen(true)
             } else if (event.target.innerText === 'Add sport') {
                 setAddSportModalOpen(true)
@@ -71,10 +67,8 @@ export default function LongMenu() {
                 <MenuItem onClick={handleClose}>View leaderboard</MenuItem>
                 <MenuItem onClick={handleClose}>View recent games</MenuItem>
                 <MenuItem onClick={handleClose}>Add result</MenuItem>
-                <MenuItem onClick={handleClose}>Add players</MenuItem>
                 <MenuItem onClick={handleClose}>Add sport</MenuItem>
             </Menu>
-            <AddPlayersModal open={addPlayerModalOpen} setOpen={setAddPlayerModalOpen} />
             <AddResultModal open={addResultModalOpen} setOpen={setAddResultModalOpen} />
             <AddSportModal open={addSportModalOpen} setOpen={setAddSportModalOpen} />
         </div>
