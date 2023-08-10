@@ -1,6 +1,6 @@
 import unittest
 import random
-from elocalculator import Player, get_new_elos, set_new_elos
+from backend.elocalculator import Player, get_new_elos, set_new_elos
 
 
 class TestEloAlgorithm(unittest.TestCase):

@@ -1,7 +1,7 @@
 from datetime import datetime
-
 from data_types import PlayerData, Player, Result
 from csv import DictReader, writer, DictWriter
+import elocalculator
 
 
 def get_last_10(last10: str) -> list[int, int]:
@@ -94,6 +94,8 @@ def add_result(result: Result):
     stats = []
     winner_found = False
     loser_found = False
+    w_elo = 1000
+    l_elo = 1000
     with open(f"data/{sport}.csv", newline='') as csvfile:
         rdr = DictReader(csvfile)
         for r in rdr:
@@ -101,10 +103,12 @@ def add_result(result: Result):
                 winner_found = True
                 r["wins"] = int(r["wins"]) + 1
                 r = handle_recent_win(r)
+                w_elo = int(r["elo"])
             elif r["name"] == loser:
                 loser_found = True
                 r["losses"] = int(r["losses"]) + 1
                 r = handle_recent_loss(r)
+                l_elo = int(r["elo"])
             stats.append(r)
     if not winner_found:
         stats.append({
@@ -122,6 +126,14 @@ def add_result(result: Result):
             "losses": 1,
             "last10": "l"
         })
+    w = elocalculator.Player(name=winner, elo=w_elo)
+    l = elocalculator.Player(name=loser, elo=l_elo)
+    elocalculator.set_new_elos(w, l)
+    for s in stats:
+        if s["name"] == winner:
+            s["elo"] = w.elo
+        elif s["name"] == loser:
+            s["elo"] = l.elo
     with open(f"data/{sport}.csv", "w", newline='') as csvfile:
         fieldnames = stats[0].keys()
         wrtr = DictWriter(csvfile, fieldnames=fieldnames)
