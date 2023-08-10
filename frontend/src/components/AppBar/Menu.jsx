@@ -9,7 +9,7 @@ import AddSportModal from './Modals/AddSportModal'
 
 const ITEM_HEIGHT = 60
 
-export default function LongMenu() {
+export default function LongMenu({ sport }) {
     const navigate = useNavigate()
 
     const [addResultModalOpen, setAddResultModalOpen] = React.useState(false)
@@ -69,8 +69,16 @@ export default function LongMenu() {
                 <MenuItem onClick={handleClose}>Add result</MenuItem>
                 <MenuItem onClick={handleClose}>Add sport</MenuItem>
             </Menu>
-            <AddResultModal open={addResultModalOpen} setOpen={setAddResultModalOpen} />
-            <AddSportModal open={addSportModalOpen} setOpen={setAddSportModalOpen} />
+            <AddResultModal
+                open={addResultModalOpen}
+                setOpen={setAddResultModalOpen}
+                sport={sport}
+            />
+            <AddSportModal
+                open={addSportModalOpen}
+                setOpen={setAddSportModalOpen}
+                sport={sport}
+            />
         </div>
     )
 }

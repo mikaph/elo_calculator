@@ -15,7 +15,7 @@ export default function ButtonAppBar({ sport, sportList, setSport }) {
                         Palisuli
                     </Typography>
                     <BasicMenu sport={sport} sportList={sportList} setSport={setSport} />
-                    <LongMenu />
+                    <LongMenu sport={sport} />
                 </Toolbar>
             </AppBar>
         </Box>

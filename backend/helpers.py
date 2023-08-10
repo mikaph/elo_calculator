@@ -60,6 +60,16 @@ def get_sports() -> list[str]:
         return ret
 
 
+def get_players(sport_name: str) -> list[str]:
+    ret = []
+    with open(f"data/players.csv", newline='') as csvfile:
+        rdr = DictReader(csvfile)
+        for r in rdr:
+            if r["sport"] == sport_name:
+                ret.append(r["name"])
+        return ret
+
+
 def add_player(player: Player):
     name = player.name
     sport = player.sport
@@ -84,6 +94,12 @@ def handle_recent_loss(r: dict) -> dict:
         last10 = last10[1:]
     r["last10"] = last10
     return r
+
+
+def add_player_to_list(sport: str, player: str):
+    with open("data/players.csv", "a") as csvfile:
+        wrtr = writer(csvfile, delimiter=",")
+        wrtr.writerow([sport, player])
 
 
 def add_result(result: Result):
@@ -118,6 +134,7 @@ def add_result(result: Result):
             "losses": 0,
             "last10": "w"
         })
+        add_player_to_list(sport, winner)
     if not loser_found:
         stats.append({
             "name": loser,
@@ -126,6 +143,7 @@ def add_result(result: Result):
             "losses": 1,
             "last10": "l"
         })
+        add_player_to_list(sport, loser)
     w = elocalculator.Player(name=winner, elo=w_elo)
     l = elocalculator.Player(name=loser, elo=l_elo)
     elocalculator.set_new_elos(w, l)

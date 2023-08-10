@@ -16,6 +16,11 @@ async def get_sports() -> list[str]:
     return helpers.get_sports()
 
 
+@app.get("/players/{sport_name}")
+async def get_players(sport_name: str) -> list[str]:
+    return helpers.get_players(sport_name)
+
+
 @app.post("/add_result/")
 async def add_result(result: Result):
     try:
