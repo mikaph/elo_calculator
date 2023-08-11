@@ -45,18 +45,19 @@ function App() {
             <CssBaseline />
             <Container maxWidth="lg">
                 <Grid container direction="column">
-                    <Grid item xs={12} my={2}>
+                    <Grid item my={2}>
                         <ButtonAppBar
                             sport={sport}
                             sportList={sportList}
                             setSport={setSport}
+                            setPlayerData={setPlayerData}
                         />
                     </Grid>
-                    <Grid item xs={12} my={2}>
+                    <Grid item my={2}>
                         <Routes>
                             <Route path="*" element={<Navigate to="/leaderboard" replace />} />
                             <Route path="/leaderboard" element={<Leaderboard rows={playerData} />} />
-                            <Route path="/recent_games" element={<RecentGames />} />
+                            <Route path="/recent_games" element={<RecentGames sport={sport} />} />
                         </Routes>
                     </Grid>
                 </Grid>

@@ -6,7 +6,9 @@ import Typography from '@mui/material/Typography'
 import LongMenu from './Menu'
 import BasicMenu from './SportMenu'
 
-export default function ButtonAppBar({ sport, sportList, setSport }) {
+export default function ButtonAppBar({
+    sport, sportList, setSport, setPlayerData
+}) {
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -15,7 +17,12 @@ export default function ButtonAppBar({ sport, sportList, setSport }) {
                         Palisuli
                     </Typography>
                     <BasicMenu sport={sport} sportList={sportList} setSport={setSport} />
-                    <LongMenu sport={sport} />
+                    <LongMenu
+                        sport={sport}
+                        setPlayerData={setPlayerData}
+                        setSport={setSport}
+                        sportList={sportList}
+                    />
                 </Toolbar>
             </AppBar>
         </Box>

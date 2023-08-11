@@ -19,3 +19,14 @@ class Result(BaseModel):
     sport: str
     winner: str
     loser: str
+
+
+class NewSport(BaseModel):
+    sport: str
+    filename: str
+
+
+class Game(BaseModel):
+    winner: str
+    loser: str
+    time: str

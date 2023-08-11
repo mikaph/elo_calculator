@@ -2,6 +2,10 @@ import * as React from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
 
 const style = {
     position: 'absolute',
@@ -15,8 +19,27 @@ const style = {
     p: 4
 }
 
-export default function AddSportModal({ open, setOpen }) {
+export default function AddSportModal({
+    open, setOpen, setSport, sportList
+}) {
     const handleClose = () => setOpen(false)
+    const [addButtonPressed, setAddButtonPressed] = React.useState(false)
+    const [newSport, setNewSport] = React.useState('')
+
+    const handleAddButton = () => {
+        setAddButtonPressed(true)
+        const sportString = newSport.toLowerCase().split(' ').join('_')
+        fetch('/add_sport/', {
+            method: 'POST',
+            body: JSON.stringify({
+                sport: newSport,
+                filename: sportString
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            }
+        }).then(() => setSport(newSport))
+    }
 
     return (
         <div>
@@ -27,12 +50,24 @@ export default function AddSportModal({ open, setOpen }) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Sport
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography>
+                    <Stack spacing={2}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Add a new sport
+                        </Typography>
+                        <Autocomplete
+                            freeSolo
+                            disablePortal
+                            onChange={(event, newValue) => setNewSport(newValue)}
+                            onInputChange={(event, newValue) => {
+                                setNewSport(newValue)
+                                setAddButtonPressed(false)
+                            }}
+                            id="combo-box-new-sport"
+                            options={sportList}
+                            renderInput={(params) => <TextField {...params} label="New sport" />}
+                        />
+                        {!addButtonPressed ? <Button variant="contained" onClick={handleAddButton}>Add!</Button> : <Button variant="contained" disabled>New sport added!</Button>}
+                    </Stack>
                 </Box>
             </Modal>
         </div>

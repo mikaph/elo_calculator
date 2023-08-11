@@ -1,7 +1,8 @@
 from datetime import datetime
-from data_types import PlayerData, Player, Result
+from data_types import PlayerData, Player, Result, NewSport, Game
 from csv import DictReader, writer, DictWriter
 import elocalculator
+from pathlib import Path
 
 
 def get_last_10(last10: str) -> list[int, int]:
@@ -12,7 +13,7 @@ def get_last_10(last10: str) -> list[int, int]:
     return [wins, len(last10) - wins]
 
 
-def get_statistics(sport_name: str) -> list[PlayerData]:
+def get_leaderboard(sport_name: str) -> list[PlayerData]:
     ret = []
     try:
         with open(f"data/{sport_name}.csv", newline='') as csvfile:
@@ -161,3 +162,45 @@ def add_result(result: Result):
     with open("data/recent_games.csv", "a") as csvfile:
         wrtr = writer(csvfile, delimiter=",")
         wrtr.writerow([sport, winner, loser, time])
+
+
+def add_sport(new_sport: NewSport):
+    sport = new_sport.sport
+    filename = new_sport.filename
+    with open(f"data/sports.csv", "a", newline='') as csvfile:
+        wrtr = writer(csvfile, delimiter=",")
+        wrtr.writerow([sport])
+    f = Path(f"data/{filename}.csv")
+    if not f.is_file():
+        with open(f"data/{filename}.csv", "w") as csvfile:
+            wrtr = writer(csvfile, delimiter=",")
+            wrtr.writerow(["name", "elo", "wins", "losses", "last10"])
+
+
+def get_recent_games(sport_name: str) -> list[Game]:
+    ret = []
+    row_amount = 0
+    maximum_amount_returned = 20
+    try:
+        with open(f"data/recent_games.csv", newline='') as csvfile:
+            rdr = DictReader(csvfile)
+            for r in rdr:
+                sport = r["sport"]
+                if sport != sport_name:
+                    continue
+                winner = r["winner"]
+                loser = r["loser"]
+                time = datetime.strptime(r["time"], "%Y-%m-%d %H:%M:%S.%f")
+                time = datetime.strftime(time, "%d-%m-%Y %H:%M:%S")
+                ret.append(Game(
+                    winner=winner,
+                    loser=loser,
+                    time=time
+                ))
+                row_amount += 1
+                if row_amount == maximum_amount_returned:
+                    break
+    except Exception as e:
+        print(e)
+    finally:
+        return ret

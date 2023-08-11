@@ -19,28 +19,52 @@ const style = {
     p: 4
 }
 
-export default function AddResultModal({ open, setOpen, sport }) {
+export default function AddResultModal({
+    open, setOpen, sport, setPlayerData
+}) {
     const handleClose = () => setOpen(false)
     const [winner, setWinner] = React.useState('')
     const [loser, setLoser] = React.useState('')
     const [playerNames, setPlayerNames] = React.useState([])
     const [addButtonPressed, setAddButtonPressed] = React.useState(false)
 
+    const sportString = sport.toLowerCase().split(' ').join('_')
+
     React.useEffect(() => {
-        const sportString = sport.toLowerCase().split(' ').join('_')
         fetch(`/players/${sportString}`).then((res) => {
             res.json().then((d) => {
                 setPlayerNames(d.sort())
             })
         })
-    }, [])
+    }, [sport])
 
     const handleAddButton = () => {
-        console.log('Pressed')
         setAddButtonPressed(true)
-    }
 
-    const handleNameTyped = () => setAddButtonPressed(false)
+        fetch('/add_result/', {
+            method: 'POST',
+            body: JSON.stringify({
+                sport: sportString,
+                winner,
+                loser
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            }
+        }).then(() => {
+            fetch(`/leaderboard/${sportString}`).then((res) => {
+                res.json().then((d) => {
+                    setPlayerData(d)
+                })
+            })
+        }).then(() => {
+            fetch(`/players/${sportString}`).then((res) => {
+                res.json().then((d) => {
+                    setPlayerNames(d.sort())
+                })
+            })
+        })
+    }
 
     return (
         <div>
@@ -56,17 +80,25 @@ export default function AddResultModal({ open, setOpen, sport }) {
                             Add a match result
                         </Typography>
                         <Autocomplete
+                            freeSolo
                             disablePortal
-                            onChange={(newValue) => setWinner(newValue)}
-                            onInputChange={handleNameTyped}
+                            onChange={(event, newValue) => setWinner(newValue)}
+                            onInputChange={(event, newValue) => {
+                                setWinner(newValue)
+                                setAddButtonPressed(false)
+                            }}
                             id="combo-box-winner"
                             options={playerNames.filter((p) => p !== loser)}
                             renderInput={(params) => <TextField {...params} label="Winner" />}
                         />
                         <Autocomplete
+                            freeSolo
                             disablePortal
-                            onChange={(newValue) => setLoser(newValue)}
-                            onInputChange={handleNameTyped}
+                            onChange={(event, newValue) => setLoser(newValue)}
+                            onInputChange={(event, newValue) => {
+                                setLoser(newValue)
+                                setAddButtonPressed(false)
+                            }}
                             id="combo-box-loser"
                             options={playerNames.filter((p) => p !== winner)}
                             renderInput={(params) => <TextField {...params} label="Loser" />}
