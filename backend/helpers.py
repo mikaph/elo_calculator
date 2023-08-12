@@ -1,8 +1,13 @@
-from datetime import datetime
-from data_types import PlayerData, Player, Result, NewSport, Game
+from datetime import datetime, timedelta
+import time
+
+from fastapi import HTTPException, Request
+from data_types import PlayerData, Player, Result, NewSport, Game, DBUser
 from csv import DictReader, writer, DictWriter
 import elocalculator
 from pathlib import Path
+from passlib.context import CryptContext
+import jwt
 
 
 def get_last_10(last10: str) -> list[int, int]:
@@ -204,3 +209,53 @@ def get_recent_games(sport_name: str) -> list[Game]:
         print(e)
     finally:
         return ret
+
+
+SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def get_token(request: Request):
+    # Get the token from the Authorization header
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or "bearer" not in auth_header.lower():
+        raise HTTPException(status_code=400, detail="Bearer token not found")
+
+    # Extract token
+    token = auth_header.split(" ")[1]
+
+    # Decode and verify the token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    # Check token claims (e.g., expiration)
+    if "exp" in payload and int(payload["exp"]) < time.time():
+        raise HTTPException(status_code=401, detail="Token has expired")
+
+    # Optional: Check if token is in a list of revoked tokens (this would require additional setup)
+
+    return token
+
+
+def get_user(username: str) -> DBUser | None:
+    with open(f"data/users.csv", newline='') as csvfile:
+        rdr = DictReader(csvfile)
+        for r in rdr:
+            if r["username"] == username:
+                return DBUser(username=r["username"], hashed_password=r["hashed_password"])
+
+
+def verify_password(plain_password, hashed_password) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt

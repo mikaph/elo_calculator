@@ -24,7 +24,7 @@ export default function RecentGamesTable({ recentGames }) {
                 </TableHead>
                 <TableBody>
                     {recentGames.sort((a, b) => (b.time - a.time)).map((game) => (
-                        <TableRow key={game.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                        <TableRow key={`${game.winner}${game.loser}${game.time}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                             <TableCell>{game.winner}</TableCell>
                             <TableCell>{game.loser}</TableCell>
                             <TableCell>{game.time}</TableCell>

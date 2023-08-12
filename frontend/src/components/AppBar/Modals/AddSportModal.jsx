@@ -6,6 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
+import eloService from '../../../services/elo'
 
 const style = {
     position: 'absolute',
@@ -29,16 +30,11 @@ export default function AddSportModal({
     const handleAddButton = () => {
         setAddButtonPressed(true)
         const sportString = newSport.toLowerCase().split(' ').join('_')
-        fetch('/add_sport/', {
-            method: 'POST',
-            body: JSON.stringify({
-                sport: newSport,
-                filename: sportString
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            }
-        }).then(() => setSport(newSport))
+        const sportObject = {
+            sport: newSport,
+            filename: sportString
+        }
+        eloService.postSport(sportObject).then(() => setSport(newSport))
     }
 
     return (

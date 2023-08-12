@@ -6,16 +6,19 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useNavigate } from 'react-router-dom'
 import AddResultModal from './Modals/AddResultModal'
 import AddSportModal from './Modals/AddSportModal'
+import LoginModal from './Modals/LoginModal'
+import eloService from '../../services/elo'
 
 const ITEM_HEIGHT = 60
 
 export default function LongMenu({
-    sport, setPlayerData, setSport, sportList
+    sport, setPlayerData, setSport, sportList, user, setUser
 }) {
     const navigate = useNavigate()
 
     const [addResultModalOpen, setAddResultModalOpen] = React.useState(false)
     const [addSportModalOpen, setAddSportModalOpen] = React.useState(false)
+    const [loginModalOpen, setLoginModalOpen] = React.useState(false)
 
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
@@ -24,17 +27,28 @@ export default function LongMenu({
         setAnchorEl(event.currentTarget)
     }
 
+    const handleLogout = () => {
+        eloService.clearToken()
+        window.localStorage.clear()
+        window.location.reload()
+    }
+
     const handleClose = (event) => {
         setAnchorEl(null)
-        if (event.target.innerText) {
-            if (event.target.innerText === 'Add result') {
+        const cmd = event.target.innerText
+        if (cmd) {
+            if (cmd === 'Add result') {
                 setAddResultModalOpen(true)
-            } else if (event.target.innerText === 'Add sport') {
+            } else if (cmd === 'Add sport') {
                 setAddSportModalOpen(true)
-            } else if (event.target.innerText === 'View leaderboard') {
+            } else if (cmd === 'View leaderboard') {
                 navigate('/leaderboard')
-            } else if (event.target.innerText === 'View recent games') {
+            } else if (cmd === 'View recent games') {
                 navigate('/recent_games')
+            } else if (cmd === 'Login') {
+                setLoginModalOpen(true)
+            } else if (cmd === 'Logout') {
+                handleLogout()
             }
         }
     }
@@ -68,8 +82,11 @@ export default function LongMenu({
             >
                 <MenuItem onClick={handleClose}>View leaderboard</MenuItem>
                 <MenuItem onClick={handleClose}>View recent games</MenuItem>
-                <MenuItem onClick={handleClose}>Add result</MenuItem>
-                <MenuItem onClick={handleClose}>Add sport</MenuItem>
+                {user ? <MenuItem onClick={handleClose}>Add result</MenuItem> : null}
+                {user ? <MenuItem onClick={handleClose}>Add sport</MenuItem> : null}
+                {!user
+                    ? <MenuItem onClick={handleClose}>Login</MenuItem>
+                    : <MenuItem onClick={handleClose}>Logout</MenuItem>}
             </Menu>
             <AddResultModal
                 open={addResultModalOpen}
@@ -83,6 +100,7 @@ export default function LongMenu({
                 setSport={setSport}
                 sportList={sportList}
             />
+            <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen} setUser={setUser} />
         </div>
     )
 }

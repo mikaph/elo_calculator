@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from data_types import PlayerData, Result, NewSport, Game
+from fastapi import FastAPI, Depends, HTTPException, Request
+from data_types import PlayerData, Result, NewSport, Game, Credentials, Token
 import helpers
 
 
@@ -27,7 +27,7 @@ async def get_recent_games(sport_name: str) -> list[Game]:
 
 
 @app.post("/add_result/")
-async def add_result(result: Result) -> bool:
+async def add_result(result: Result, token: str = Depends(helpers.get_token)) -> bool:
     try:
         helpers.add_result(result)
         return True
@@ -37,10 +37,22 @@ async def add_result(result: Result) -> bool:
 
 
 @app.post("/add_sport/")
-async def add_sport(new_sport: NewSport) -> bool:
+async def add_sport(new_sport: NewSport, token: str = Depends(helpers.get_token)) -> bool:
     try:
         helpers.add_sport(new_sport)
         return True
     except Exception as e:
         print(e)
         return False
+
+
+@app.post("/login/")
+async def login(credentials: Credentials) -> Token | bool:
+    db_user = helpers.get_user(credentials.username)
+    if not db_user:
+        return False
+    elif not helpers.verify_password(credentials.password, db_user.hashed_password):
+        return False
+    else:
+        access_token = helpers.create_access_token(data={"sub": db_user.username})
+        return {"token": access_token, "username": db_user.username}

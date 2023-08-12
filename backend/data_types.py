@@ -30,3 +30,17 @@ class Game(BaseModel):
     winner: str
     loser: str
     time: str
+
+
+class Credentials(BaseModel):
+    username: str
+    password: str
+
+
+class DBUser(BaseModel):
+    username: str
+    hashed_password: str
+
+class Token(BaseModel):
+    token: str
+    username: str

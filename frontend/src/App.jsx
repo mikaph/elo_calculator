@@ -10,6 +10,7 @@ import ButtonAppBar from './components/AppBar'
 import Leaderboard from './components/Leaderboard'
 import baseTheme from './theme'
 import RecentGames from './components/RecentGames'
+import eloService from './services/elo'
 
 function App() {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
@@ -23,6 +24,16 @@ function App() {
     const [playerData, setPlayerData] = useState([])
     const [sport, setSport] = useState('Ping pong')
     const [sportList, setSportList] = useState([])
+    const [user, setUser] = useState(null)
+
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem('loggedEloCalculatorUser')
+        if (loggedUserJSON) {
+            const userJson = JSON.parse(loggedUserJSON)
+            setUser(userJson)
+            eloService.setToken(userJson.token)
+        }
+    }, [])
 
     useEffect(() => {
         fetch('/sports').then((res) => {
@@ -51,6 +62,8 @@ function App() {
                             sportList={sportList}
                             setSport={setSport}
                             setPlayerData={setPlayerData}
+                            user={user}
+                            setUser={setUser}
                         />
                     </Grid>
                     <Grid item my={2}>
