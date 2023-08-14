@@ -23,7 +23,7 @@ function App() {
 
     const [playerData, setPlayerData] = useState([])
     const [sport, setSport] = useState('Ping pong')
-    const [sportList, setSportList] = useState([])
+    const [sportList, setSportList] = useState(['Ping pong'])
     const [user, setUser] = useState(null)
 
     useEffect(() => {

@@ -1,9 +1,26 @@
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends
 from data_types import PlayerData, Result, NewSport, Game, Credentials, Token
 import helpers
+from database import Base, Users, engine, session
+import secrets
+import login_helpers
 
 
 app = FastAPI()
+
+
+@app.on_event("startup")
+async def startup():
+    Base.metadata.create_all(bind=engine)
+    default_user = session.query(Users).filter_by(username=secrets.username).one_or_none()
+    if not default_user:
+        default_user = Users(username=secrets.username, hashed_password=secrets.hashed_password)
+        default_user.save()
+
+
+@app.on_event("shutdown")
+async def startup():
+    pass
 
 
 @app.get("/leaderboard/{sport_name}")
@@ -27,7 +44,7 @@ async def get_recent_games(sport_name: str) -> list[Game]:
 
 
 @app.post("/add_result/")
-async def add_result(result: Result, token: str = Depends(helpers.get_token)) -> bool:
+async def add_result(result: Result, token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.add_result(result)
         return True
@@ -37,7 +54,7 @@ async def add_result(result: Result, token: str = Depends(helpers.get_token)) ->
 
 
 @app.post("/add_sport/")
-async def add_sport(new_sport: NewSport, token: str = Depends(helpers.get_token)) -> bool:
+async def add_sport(new_sport: NewSport, token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.add_sport(new_sport)
         return True
@@ -48,11 +65,11 @@ async def add_sport(new_sport: NewSport, token: str = Depends(helpers.get_token)
 
 @app.post("/login/")
 async def login(credentials: Credentials) -> Token | bool:
-    db_user = helpers.get_user(credentials.username)
+    db_user = login_helpers.get_user(credentials.username)
     if not db_user:
         return False
-    elif not helpers.verify_password(credentials.password, db_user.hashed_password):
+    elif not login_helpers.verify_password(credentials.password, db_user.hashed_password):
         return False
     else:
-        access_token = helpers.create_access_token(data={"sub": db_user.username})
+        access_token = login_helpers.create_access_token(data={"sub": db_user.username})
         return {"token": access_token, "username": db_user.username}
