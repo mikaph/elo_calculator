@@ -35,21 +35,19 @@ export default function LongMenu({
 
     const handleClose = (event) => {
         setAnchorEl(null)
-        const cmd = event.target.innerText
-        if (cmd) {
-            if (cmd === 'Add result') {
-                setAddResultModalOpen(true)
-            } else if (cmd === 'Add sport') {
-                setAddSportModalOpen(true)
-            } else if (cmd === 'View leaderboard') {
-                navigate('/leaderboard')
-            } else if (cmd === 'View recent games') {
-                navigate('/recent_games')
-            } else if (cmd === 'Login') {
-                setLoginModalOpen(true)
-            } else if (cmd === 'Logout') {
-                handleLogout()
-            }
+        const cmd = String(event.target.innerText).trim()
+        if (cmd === 'Add result') {
+            setAddResultModalOpen(true)
+        } else if (cmd === 'Add sport') {
+            setAddSportModalOpen(true)
+        } else if (cmd === 'View leaderboard') {
+            navigate('/leaderboard')
+        } else if (cmd === 'View recent games') {
+            navigate('/recent_games')
+        } else if (cmd === 'Login') {
+            setLoginModalOpen(true)
+        } else if (cmd === 'Logout') {
+            handleLogout()
         }
     }
 
