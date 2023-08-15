@@ -11,14 +11,12 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import ButtonAppBar from './components/AppBar'
 import Leaderboard from './components/Leaderboard'
-import baseTheme from './theme'
 import RecentGames from './components/RecentGames'
 import eloService from './services/elo'
 
 function App() {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
     const theme = React.useMemo(() => createTheme({
-        ...baseTheme,
         palette: {
             mode: prefersDarkMode ? 'dark' : 'light'
         }
@@ -79,7 +77,7 @@ function App() {
                     <Grid item my={2}>
                         <Routes>
                             <Route path="*" element={<Navigate to="/leaderboard" replace />} />
-                            <Route path="/leaderboard" element={<Leaderboard sport={sport} playerData={playerData} setPlayerData={setPlayerData} />} />
+                            <Route path="/leaderboard" element={<Leaderboard prefersDarkMode={prefersDarkMode} sport={sport} playerData={playerData} setPlayerData={setPlayerData} />} />
                             <Route path="/recent_games" element={<RecentGames sport={sport} />} />
                         </Routes>
                     </Grid>

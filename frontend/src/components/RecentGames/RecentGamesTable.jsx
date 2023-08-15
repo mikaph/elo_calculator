@@ -13,8 +13,8 @@ export default function RecentGamesTable({ recentGames }) {
     }
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer component={Paper} style={{ width: '100%', overflowX: 'auto' }}>
+            <Table sx={{ minWidth: { xs: 'max-content', sm: '650px' } }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Winner</TableCell>

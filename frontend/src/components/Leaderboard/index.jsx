@@ -4,7 +4,9 @@ import CardContent from '@mui/material/CardContent'
 import { useEffect } from 'react'
 import LeaderboardTable from './LeaderboardTable'
 
-export default function Leaderboard({ sport, playerData, setPlayerData }) {
+export default function Leaderboard({
+    prefersDarkMode, sport, playerData, setPlayerData
+}) {
     useEffect(() => {
         const sportString = sport.toLowerCase().split(' ').join('_')
         fetch(`/leaderboard/${sportString}`).then((res) => {
@@ -15,9 +17,9 @@ export default function Leaderboard({ sport, playerData, setPlayerData }) {
     }, [sport])
 
     return (
-        <Card sx={{ minWidth: 275 }}>
+        <Card>
             <CardContent>
-                <LeaderboardTable rows={playerData} />
+                <LeaderboardTable prefersDarkMode={prefersDarkMode} rows={playerData} />
             </CardContent>
         </Card>
     )

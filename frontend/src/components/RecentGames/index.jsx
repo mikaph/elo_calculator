@@ -16,7 +16,7 @@ export default function RecentGames({ sport }) {
     }, [sport])
 
     return (
-        <Card sx={{ minWidth: 275 }}>
+        <Card>
             <CardContent>
                 <RecentGamesTable recentGames={recentGames} />
             </CardContent>
