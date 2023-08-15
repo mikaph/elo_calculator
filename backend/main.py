@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from data_types import PlayerData, Result, NewSport, Game, Credentials, Token
 import helpers
-from database import Base, Users, engine, session
+from database import Base, Users, engine, session, Sports
 import secrets
 import login_helpers
 
@@ -16,6 +16,8 @@ async def startup():
     if not default_user:
         default_user = Users(username=secrets.username, hashed_password=secrets.hashed_password)
         default_user.save()
+        default_sport = Sports(name=secrets.default_sport)
+        default_sport.save()
 
 
 @app.on_event("shutdown")
@@ -72,4 +74,4 @@ async def login(credentials: Credentials) -> Token | bool:
         return False
     else:
         access_token = login_helpers.create_access_token(data={"sub": db_user.username})
-        return {"token": access_token, "username": db_user.username}
+        return Token(token=access_token, username=db_user.username)

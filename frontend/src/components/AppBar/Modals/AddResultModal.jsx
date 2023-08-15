@@ -21,7 +21,7 @@ const style = {
 }
 
 export default function AddResultModal({
-    open, setOpen, sport, setPlayerData
+    open, setOpen, sport, setPlayerData, handleEloError
 }) {
     const handleClose = () => setOpen(false)
     const [winner, setWinner] = React.useState('')
@@ -39,7 +39,8 @@ export default function AddResultModal({
         })
     }, [sport])
 
-    const handleAddButton = () => {
+    const handleAddButton = (event) => {
+        event.preventDefault()
         setAddButtonPressed(true)
         const resultObject = {
             sport: sportString,
@@ -59,6 +60,12 @@ export default function AddResultModal({
                     setPlayerNames(d.sort())
                 })
             })
+        }).finally(() => {
+            setWinner('')
+            setLoser('')
+        }).catch(() => {
+            handleEloError()
+            handleClose()
         })
     }
 
@@ -70,38 +77,44 @@ export default function AddResultModal({
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
-                    <Stack spacing={2}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Add a match result
-                        </Typography>
-                        <Autocomplete
-                            freeSolo
-                            disablePortal
-                            onChange={(event, newValue) => setWinner(newValue)}
-                            onInputChange={(event, newValue) => {
-                                setWinner(newValue)
-                                setAddButtonPressed(false)
-                            }}
-                            id="combo-box-winner"
-                            options={playerNames.filter((p) => p !== loser)}
-                            renderInput={(params) => <TextField {...params} label="Winner" />}
-                        />
-                        <Autocomplete
-                            freeSolo
-                            disablePortal
-                            onChange={(event, newValue) => setLoser(newValue)}
-                            onInputChange={(event, newValue) => {
-                                setLoser(newValue)
-                                setAddButtonPressed(false)
-                            }}
-                            id="combo-box-loser"
-                            options={playerNames.filter((p) => p !== winner)}
-                            renderInput={(params) => <TextField {...params} label="Loser" />}
-                        />
-                        {!addButtonPressed ? <Button variant="contained" onClick={handleAddButton}>Add!</Button> : <Button variant="contained" disabled>Result added!</Button>}
-                    </Stack>
-                </Box>
+                <form onSubmit={handleAddButton}>
+                    <Box sx={style}>
+                        <Stack spacing={2}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                Add a match result
+                            </Typography>
+                            <Autocomplete
+                                freeSolo
+                                disablePortal
+                                value={winner}
+                                inputValue={winner}
+                                onChange={(event, newValue) => setWinner(newValue)}
+                                onInputChange={(event, newValue) => {
+                                    setWinner(newValue)
+                                    setAddButtonPressed(false)
+                                }}
+                                id="combo-box-winner"
+                                options={playerNames.filter((p) => p !== loser)}
+                                renderInput={(params) => <TextField {...params} label="Winner" />}
+                            />
+                            <Autocomplete
+                                freeSolo
+                                disablePortal
+                                value={loser}
+                                inputValue={loser}
+                                onChange={(event, newValue) => setLoser(newValue)}
+                                onInputChange={(event, newValue) => {
+                                    setLoser(newValue)
+                                    setAddButtonPressed(false)
+                                }}
+                                id="combo-box-loser"
+                                options={playerNames.filter((p) => p !== winner)}
+                                renderInput={(params) => <TextField {...params} label="Loser" />}
+                            />
+                            {!addButtonPressed ? <Button type="submit" variant="contained" onClick={handleAddButton}>Add!</Button> : <Button variant="contained" disabled>Result added!</Button>}
+                        </Stack>
+                    </Box>
+                </form>
             </Modal>
         </div>
     )

@@ -1,7 +1,5 @@
-import secrets
 from passlib.context import CryptContext
 import jwt
-
 from database import session, Users
 import secrets
 from fastapi import HTTPException, Request

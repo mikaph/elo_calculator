@@ -10,6 +10,17 @@ const clearToken = () => {
     token = null
 }
 
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            clearToken()
+            window.localStorage.clear()
+        }
+        return Promise.reject(error)
+    }
+)
+
 const postResult = async (resultObject) => {
     const config = {
         headers: { Authorization: token }

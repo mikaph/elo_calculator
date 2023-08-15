@@ -35,6 +35,7 @@ class RecentGames(Base):
     __tablename__ = "recent_games"
 
     id: Mapped[int]  = mapped_column(primary_key=True)
+    sport: Mapped[str] = mapped_column(String(30))
     winner: Mapped[str] = mapped_column(String(30))
     loser: Mapped[str] = mapped_column(String(30))
     time: Mapped[str] = mapped_column(String(30))
@@ -55,7 +56,7 @@ class Statistics(Base):
     sport: Mapped[str] = mapped_column(String(30))
     name: Mapped[str] = mapped_column(String(30))
     elo: Mapped[int] 
-    wind: Mapped[int] 
+    wins: Mapped[int]
     losses: Mapped[int] 
     last10: Mapped[str] = mapped_column(String(10))
 

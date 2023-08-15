@@ -37,6 +37,7 @@ module.exports = {
         'arrow-spacing': ['error', { before: true, after: true }],
         'object-curly-spacing': ['error', 'always'],
         'react/jsx-props-no-spreading': 'off',
-        'react/prop-types': 'off'
+        'react/prop-types': 'off',
+        'newline-per-chained-call': 'off'
     }
 }

@@ -4,3 +4,4 @@ node_modules
 *pycache*
 .idea
 *.sqlite
+secrets.py
