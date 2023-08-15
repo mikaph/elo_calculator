@@ -2,3 +2,7 @@
 __pycache__
 data
 tests
+README.md
+Makefile
+.gitignore
+node_modules
