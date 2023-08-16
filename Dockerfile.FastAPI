@@ -13,8 +13,4 @@ WORKDIR /app/backend
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-CMD ["/app/wait-for-mysql.sh", "mysql", "3306", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-RUN apt-get update && apt-get install -y netcat-openbsd
-COPY backend/wait-for-mysql.sh /app/wait-for-mysql.sh
-RUN chmod +x /app/wait-for-mysql.sh
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
