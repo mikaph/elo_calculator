@@ -31,7 +31,7 @@ function App() {
 
     const handleEloError = (error) => {
         setUser(null)
-        setErrorMessage('Session has expired, please login again')
+        setErrorMessage('Please login!')
         console.log(error)
         setErrorSnackbarOpen(true)
     }

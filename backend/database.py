@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine, String, MetaData
-from sqlalchemy.orm import DeclarativeBase, mapped_column, sessionmaker, Mapped
+from sqlalchemy import create_engine, String, Column, Integer
+from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 
 
@@ -7,7 +7,7 @@ ENV = os.environ.get("PYTHON_ENV", "development")
 
 
 if ENV == "production":
-    DATABASE_URL = "postgresql://root:root@db_container_name/db_name"
+    DATABASE_URL = "mysql+pymysql://root:root@mysql:3306/elo_calculator_db"
 else:
     DATABASE_URL = "sqlite:///db.sqlite"
 
@@ -15,54 +15,69 @@ else:
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 session = SessionLocal()
-
-
-class Base(DeclarativeBase):
-    def save(self):
-        session.add(self)
-        session.commit()
+Base = declarative_base()
 
 
 class Players(Base):
     __tablename__ = "players"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    sport: Mapped[str]  = mapped_column(String(30))
-    name: Mapped[str] = mapped_column(String(30))
+    id = Column(Integer, primary_key=True)
+    sport = Column(String(30))
+    name = Column(String(30))
+
+    def save(self):
+        session.add(self)
+        session.commit()
 
 
 class RecentGames(Base):
     __tablename__ = "recent_games"
 
-    id: Mapped[int]  = mapped_column(primary_key=True)
-    sport: Mapped[str] = mapped_column(String(30))
-    winner: Mapped[str] = mapped_column(String(30))
-    loser: Mapped[str] = mapped_column(String(30))
-    time: Mapped[str] = mapped_column(String(30))
+    id = Column(Integer, primary_key=True)
+    sport = Column(String(30))
+    winner = Column(String(30))
+    loser = Column(String(30))
+    time = Column(String(30))
+
+    def save(self):
+        session.add(self)
+        session.commit()
 
 
 class Users(Base):
     __tablename__ = "users"
 
-    id: Mapped[int]  = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(String(30))
-    hashed_password: Mapped[str] = mapped_column(String(90))
+    id = Column(Integer, primary_key=True)
+    username = Column(String(30))
+    hashed_password = Column(String(90))
+
+    def save(self):
+        session.add(self)
+        session.commit()
 
 
 class Statistics(Base):
     __tablename__ = "statistics"
 
-    id: Mapped[int]  = mapped_column(primary_key=True)
-    sport: Mapped[str] = mapped_column(String(30))
-    name: Mapped[str] = mapped_column(String(30))
-    elo: Mapped[int] 
-    wins: Mapped[int]
-    losses: Mapped[int] 
-    last10: Mapped[str] = mapped_column(String(10))
+    id = Column(Integer, primary_key=True)
+    sport = Column(String(30))
+    name = Column(String(30))
+    elo = Column(Integer)
+    wins = Column(Integer)
+    losses = Column(Integer)
+    last10 = Column(String(10))
+
+    def save(self):
+        session.add(self)
+        session.commit()
 
 
 class Sports(Base):
     __tablename__ = "sports"
 
-    id: Mapped[int]  = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(30))
+    id = Column(Integer, primary_key=True)
+    name = Column(String(30))
+
+    def save(self):
+        session.add(self)
+        session.commit()

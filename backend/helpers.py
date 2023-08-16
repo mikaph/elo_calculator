@@ -1,7 +1,6 @@
 from datetime import datetime
 from database import Sports, session, Players, RecentGames, Statistics
 from data_types import PlayerData, Result, NewSport, Game
-from csv import DictReader, writer, DictWriter
 import elocalculator
 
 

@@ -1,0 +1,3 @@
+[flake8]
+exclude = frontend
+ignore = E501,E741

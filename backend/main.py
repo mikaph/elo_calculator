@@ -20,11 +20,6 @@ async def startup():
         default_sport.save()
 
 
-@app.on_event("shutdown")
-async def startup():
-    pass
-
-
 @app.get("/leaderboard/{sport_name}")
 async def get_leaderboard(sport_name: str) -> list[PlayerData]:
     return helpers.get_leaderboard(sport_name)

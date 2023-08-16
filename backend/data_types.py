@@ -41,6 +41,7 @@ class DBUser(BaseModel):
     username: str
     hashed_password: str
 
+
 class Token(BaseModel):
     token: str
     username: str

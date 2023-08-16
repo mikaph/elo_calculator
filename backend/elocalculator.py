@@ -37,13 +37,13 @@ def set_new_elos(winner: Player, loser: Player):
 
 
 def get_expected_score(winner_elo: int, loser_elo: int):
-    return 1/(1 + (10**((loser_elo - winner_elo)/400)))
+    return 1 / (1 + (10**((loser_elo - winner_elo) / 400)))
 
 
 def get_new_elos(winner: Player, loser: Player):
     expected_score = get_expected_score(winner.elo, loser.elo)
-    winner_new_elo = round(winner.elo + (1 - expected_score)*K_FACTOR)
-    loser_new_elo = round(loser.elo + (0 - 1 + expected_score)*K_FACTOR)
+    winner_new_elo = round(winner.elo + (1 - expected_score) * K_FACTOR)
+    loser_new_elo = round(loser.elo + (0 - 1 + expected_score) * K_FACTOR)
     logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
     logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} "
                  f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         for line in games_in:
             if line.startswith('*'):
                 reading_initial_values = False
-                print(f"initial values:")
+                print("initial values:")
                 for player in players.values():
                     print(player)
                 continue
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                 players[game_winner.name].elo = new_elos[0]
                 players[game_loser.name].elo = new_elos[1]
 
-        print(f"new ratings:")
+        print("new ratings:")
         top_list = list(players.values())
         top_list.sort()
         top_list.reverse()
