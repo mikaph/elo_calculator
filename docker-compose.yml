@@ -1,32 +1,46 @@
-version: '3.8'
-
+version: '3'
 services:
   backend:
     build:
       context: .
       dockerfile: Dockerfile.FastAPI
+    container_name: "backend"
     restart: always
+    environment:
+      PYTHON_ENV: production
     depends_on:
-    - mysql
+      db:
+        condition: service_healthy
     ports:
-    - 8000:8000
+      - 8000:8000
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.React
-    depends_on:
-    - backend
-    ports:
-    - 80:80
-
-  mysql:
+    container_name: "frontend"
+    restart: always
     environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - MYSQL_DATABASE=elo_calculator_db
-    image: mysql:5.7
+      NODE_ENV: production
+    depends_on:
+      - backend
+    ports:
+      - 80:80
+
+  db:
+    image: mysql:8
+    container_name: "db"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: elo_calculator_db
+      MYSQL_ROOT_HOST: "%"
+    restart: always
     platform: linux/x86_64
     ports:
-    - 3306:3306
+      - 3306:3306
     volumes:
-    - ~/elo_calculator_db:/var/lib/mysql
+      - ~/elo_calculator_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", 'mysqladmin', 'ping', '-h', '127.0.0.1']
+      timeout: 5s
+      retries: 10

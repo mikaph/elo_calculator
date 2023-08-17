@@ -35,6 +35,8 @@ export default function AddResultModal({
         fetch(`/players/${sportString}`).then((res) => {
             res.json().then((d) => {
                 setPlayerNames(d.sort())
+            }).catch((e) => {
+                console.log(e)
             })
         })
     }, [sport])

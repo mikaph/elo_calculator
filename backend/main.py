@@ -4,9 +4,25 @@ import helpers
 from database import Base, Users, engine, session, Sports
 import secrets
 import login_helpers
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:443",
+    "http://localhost:80",
+    "https://localhost",
+    "http://localhost"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.on_event("startup")

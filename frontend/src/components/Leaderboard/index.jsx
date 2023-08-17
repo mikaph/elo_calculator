@@ -12,6 +12,8 @@ export default function Leaderboard({
         fetch(`/leaderboard/${sportString}`).then((res) => {
             res.json().then((d) => {
                 setPlayerData(d)
+            }).catch((e) => {
+                console.log(e)
             })
         })
     }, [sport])

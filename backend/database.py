@@ -7,7 +7,7 @@ ENV = os.environ.get("PYTHON_ENV", "development")
 
 
 if ENV == "production":
-    DATABASE_URL = "mysql+pymysql://root:root@mysql:3306/elo_calculator_db"
+    DATABASE_URL = "mysql+pymysql://root:root@db:3306/elo_calculator_db"
 else:
     DATABASE_URL = "sqlite:///db.sqlite"
 

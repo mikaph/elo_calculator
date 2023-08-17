@@ -54,6 +54,8 @@ function App() {
             res.json().then((d) => {
                 const arr = d.sort()
                 setSportList(arr)
+            }).catch((e) => {
+                console.log(e)
             })
         })
     }, [sport])
