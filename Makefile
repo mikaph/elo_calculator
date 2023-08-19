@@ -1,14 +1,10 @@
-build-fastapi:
-	docker build -t fastapi-app -f Dockerfile.FastAPI .
+fastapi:
+	docker buildx build --platform linux/amd64,linux/arm64 -t tommipoiko/palisuli:fastapi -f Dockerfile.FastAPI --push .
 
-fastapi: build-fastapi
-	docker run --rm -p 8000:8000 fastapi-app
+react:
+	docker buildx build --platform linux/amd64,linux/arm64 -t tommipoiko/palisuli:react -f Dockerfile.React --push .
 
-build-react:
-	docker build -t react-app -f Dockerfile.React .
-
-react: build-react
-	docker run --rm -p 80:80 react-app
+release: fastapi react
 
 build-flake8:
 	docker build -t flake8:latest -f Dockerfile.flake8 .

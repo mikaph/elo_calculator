@@ -1,10 +1,8 @@
 version: '3'
 services:
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.FastAPI
-    container_name: "backend"
+    image: tommipoiko/palisuli:fastapi
+    container_name: "be"
     restart: always
     environment:
       PYTHON_ENV: production
@@ -15,10 +13,8 @@ services:
       - 8000:8000
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.React
-    container_name: "frontend"
+    image: tommipoiko/palisuli:react
+    container_name: "fe"
     restart: always
     environment:
       NODE_ENV: production
@@ -35,7 +31,6 @@ services:
       MYSQL_DATABASE: elo_calculator_db
       MYSQL_ROOT_HOST: "%"
     restart: always
-    platform: linux/x86_64
     ports:
       - 3306:3306
     volumes:
