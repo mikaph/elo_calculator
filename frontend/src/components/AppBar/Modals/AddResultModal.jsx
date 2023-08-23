@@ -32,12 +32,10 @@ export default function AddResultModal({
     const sportString = sport.toLowerCase().split(' ').join('_')
 
     React.useEffect(() => {
-        fetch(`/players/${sportString}`).then((res) => {
-            res.json().then((d) => {
-                setPlayerNames(d.sort())
-            }).catch((e) => {
-                console.log(e)
-            })
+        eloService.getPlayers(sportString).then((players) => {
+            setPlayerNames(players.sort())
+        }).catch((e) => {
+            console.log(e)
         })
     }, [sport])
 
@@ -51,16 +49,16 @@ export default function AddResultModal({
         }
 
         eloService.postResult(resultObject).then(() => {
-            fetch(`/leaderboard/${sportString}`).then((res) => {
-                res.json().then((d) => {
-                    setPlayerData(d)
-                })
+            eloService.getLeaderboard(sportString).then((stats) => {
+                setPlayerData(stats)
+            }).catch((e) => {
+                console.log(e)
             })
         }).then(() => {
-            fetch(`/players/${sportString}`).then((res) => {
-                res.json().then((d) => {
-                    setPlayerNames(d.sort())
-                })
+            eloService.getPlayers(sportString).then((players) => {
+                setPlayerNames(players.sort())
+            }).catch((e) => {
+                console.log(e)
             })
         }).finally(() => {
             setWinner('')
@@ -90,9 +88,19 @@ export default function AddResultModal({
                                 disablePortal
                                 value={winner}
                                 inputValue={winner}
-                                onChange={(event, newValue) => setWinner(newValue)}
+                                onChange={(event, newValue) => {
+                                    if (!newValue) {
+                                        setWinner('')
+                                    } else {
+                                        setWinner(newValue)
+                                    }
+                                }}
                                 onInputChange={(event, newValue) => {
-                                    setWinner(newValue)
+                                    if (!newValue) {
+                                        setWinner('')
+                                    } else {
+                                        setWinner(newValue)
+                                    }
                                     setAddButtonPressed(false)
                                 }}
                                 id="combo-box-winner"
@@ -104,9 +112,19 @@ export default function AddResultModal({
                                 disablePortal
                                 value={loser}
                                 inputValue={loser}
-                                onChange={(event, newValue) => setLoser(newValue)}
+                                onChange={(event, newValue) => {
+                                    if (!newValue) {
+                                        setLoser('')
+                                    } else {
+                                        setLoser(newValue)
+                                    }
+                                }}
                                 onInputChange={(event, newValue) => {
-                                    setLoser(newValue)
+                                    if (!newValue) {
+                                        setLoser('')
+                                    } else {
+                                        setLoser(newValue)
+                                    }
                                     setAddButtonPressed(false)
                                 }}
                                 id="combo-box-loser"

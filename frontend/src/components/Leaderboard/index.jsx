@@ -3,18 +3,17 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import { useEffect } from 'react'
 import LeaderboardTable from './LeaderboardTable'
+import eloService from '../../services/elo'
 
 export default function Leaderboard({
     prefersDarkMode, sport, playerData, setPlayerData
 }) {
     useEffect(() => {
         const sportString = sport.toLowerCase().split(' ').join('_')
-        fetch(`/leaderboard/${sportString}`).then((res) => {
-            res.json().then((d) => {
-                setPlayerData(d)
-            }).catch((e) => {
-                console.log(e)
-            })
+        eloService.getLeaderboard(sportString).then((stats) => {
+            setPlayerData(stats)
+        }).catch((e) => {
+            console.log(e)
         })
     }, [sport])
 

@@ -1,8 +1,12 @@
-/* eslint-disable no-unused-vars */
 import axios from 'axios'
 
-// TODO Create the methods and use this url in them
-const url = 'http://localhost:8000'
+const ENV = process.env.NODE_ENV
+let url = ''
+if (ENV === 'production') {
+    url = 'https://elo-calculator.northeurope.cloudapp.azure.com/api'
+} else {
+    url = 'http://localhost:8000/api'
+}
 
 let token = null
 
@@ -42,19 +46,23 @@ const postSport = async (sportObject) => {
 }
 
 const getLeaderboard = async (sportName) => {
-    console.log('Leaderboard')
+    const response = await axios.get(`${url}/leaderboard/${sportName}`)
+    return response.data
 }
 
 const getSports = async () => {
-    console.log('Sports')
+    const response = await axios.get(`${url}/sports`)
+    return response.data
 }
 
 const getPlayers = async (sportName) => {
-    console.log('Players')
+    const response = await axios.get(`${url}/players/${sportName}`)
+    return response.data
 }
 
 const getRecentGames = async (sportName) => {
-    console.log('Recent games')
+    const response = await axios.get(`${url}/recent_games/${sportName}`)
+    return response.data
 }
 
 export default {

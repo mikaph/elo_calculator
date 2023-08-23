@@ -50,13 +50,11 @@ function App() {
     }, [])
 
     useEffect(() => {
-        fetch('/sports').then((res) => {
-            res.json().then((d) => {
-                const arr = d.sort()
-                setSportList(arr)
-            }).catch((e) => {
-                console.log(e)
-            })
+        eloService.getSports().then((sports) => {
+            const arr = sports.sort()
+            setSportList(arr)
+        }).catch((e) => {
+            console.log(e)
         })
     }, [sport])
 

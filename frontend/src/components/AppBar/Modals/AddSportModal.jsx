@@ -65,10 +65,19 @@ export default function AddSportModal({
                                 disablePortal
                                 value={newSport}
                                 inputValue={newSport}
-                                onChange={(event, newValue) => setNewSport(newValue)}
+                                onChange={(event, newValue) => {
+                                    if (!newValue) {
+                                        setNewSport('')
+                                    } else {
+                                        setNewSport(newValue)
+                                    }
+                                }}
                                 onInputChange={(event, newValue) => {
-                                    setNewSport(newValue)
-                                    setAddButtonPressed(false)
+                                    if (!newValue) {
+                                        setNewSport('')
+                                    } else {
+                                        setNewSport(newValue)
+                                    }
                                 }}
                                 id="combo-box-new-sport"
                                 options={sportList}

@@ -1,6 +1,6 @@
 version: '3'
 services:
-  backend:
+  be:
     image: tommipoiko/palisuli:fastapi
     container_name: "be"
     restart: always
@@ -12,16 +12,19 @@ services:
     ports:
       - 8000:8000
 
-  frontend:
+  fe:
     image: tommipoiko/palisuli:react
     container_name: "fe"
     restart: always
     environment:
       NODE_ENV: production
     depends_on:
-      - backend
+      - be
     ports:
       - 80:80
+      - 443:443
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
 
   db:
     image: mysql:8

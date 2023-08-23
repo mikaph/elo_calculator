@@ -2,16 +2,17 @@ import * as React from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import RecentGamesTable from './RecentGamesTable'
+import eloService from '../../services/elo'
 
 export default function RecentGames({ sport }) {
     const [recentGames, setRecentGames] = React.useState([])
 
     React.useEffect(() => {
         const sportString = sport.toLowerCase().split(' ').join('_')
-        fetch(`/recent_games/${sportString}`).then((res) => {
-            res.json().then((d) => {
-                setRecentGames(d)
-            })
+        eloService.getRecentGames(sportString).then((games) => {
+            setRecentGames(games)
+        }).catch((e) => {
+            console.log(e)
         })
     }, [sport])
 

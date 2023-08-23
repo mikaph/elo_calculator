@@ -6,14 +6,19 @@ import secrets
 import login_helpers
 from fastapi.middleware.cors import CORSMiddleware
 
-
 app = FastAPI()
 
 origins = [
     "http://localhost:443",
     "http://localhost:80",
     "https://localhost",
-    "http://localhost"
+    "http://localhost",
+    "https://localhost:3000",
+    "http://localhost:3000",
+    "http://fe:443",
+    "http://fe:80",
+    "https://fe",
+    "http://fe"
 ]
 
 app.add_middleware(
@@ -36,27 +41,27 @@ async def startup():
         default_sport.save()
 
 
-@app.get("/leaderboard/{sport_name}")
+@app.get("/api/leaderboard/{sport_name}")
 async def get_leaderboard(sport_name: str) -> list[PlayerData]:
     return helpers.get_leaderboard(sport_name)
 
 
-@app.get("/sports")
+@app.get("/api/sports")
 async def get_sports() -> list[str]:
     return helpers.get_sports()
 
 
-@app.get("/players/{sport_name}")
+@app.get("/api/players/{sport_name}")
 async def get_players(sport_name: str) -> list[str]:
     return helpers.get_players(sport_name)
 
 
-@app.get("/recent_games/{sport_name}")
+@app.get("/api/recent_games/{sport_name}")
 async def get_recent_games(sport_name: str) -> list[Game]:
     return helpers.get_recent_games(sport_name)
 
 
-@app.post("/add_result/")
+@app.post("/api/add_result/")
 async def add_result(result: Result, token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.add_result(result)
@@ -66,7 +71,7 @@ async def add_result(result: Result, token: str = Depends(login_helpers.get_toke
         return False
 
 
-@app.post("/add_sport/")
+@app.post("/api/add_sport/")
 async def add_sport(new_sport: NewSport, token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.add_sport(new_sport)
@@ -76,7 +81,7 @@ async def add_sport(new_sport: NewSport, token: str = Depends(login_helpers.get_
         return False
 
 
-@app.post("/login/")
+@app.post("/api/login/")
 async def login(credentials: Credentials) -> Token | bool:
     db_user = login_helpers.get_user(credentials.username)
     if not db_user:
