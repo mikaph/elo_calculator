@@ -8,6 +8,7 @@ import AddResultModal from './Modals/AddResultModal'
 import AddSportModal from './Modals/AddSportModal'
 import LoginModal from './Modals/LoginModal'
 import eloService from '../../services/elo'
+import SignupModal from './Modals/SignupModal'
 
 const ITEM_HEIGHT = 60
 
@@ -19,6 +20,7 @@ export default function LongMenu({
     const [addResultModalOpen, setAddResultModalOpen] = React.useState(false)
     const [addSportModalOpen, setAddSportModalOpen] = React.useState(false)
     const [loginModalOpen, setLoginModalOpen] = React.useState(false)
+    const [signupModalOpen, setSignupModalOpen] = React.useState(false)
 
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
@@ -44,8 +46,10 @@ export default function LongMenu({
             navigate('/leaderboard')
         } else if (cmd === 'View recent games') {
             navigate('/recent_games')
-        } else if (cmd === 'Login') {
+        } else if (cmd === 'Log in') {
             setLoginModalOpen(true)
+        } else if (cmd === 'Sign up') {
+            setSignupModalOpen(true)
         } else if (cmd === 'Logout') {
             handleLogout()
         }
@@ -83,7 +87,12 @@ export default function LongMenu({
                 {user ? <MenuItem onClick={handleClose}>Add result</MenuItem> : null}
                 {user ? <MenuItem onClick={handleClose}>Add sport</MenuItem> : null}
                 {!user
-                    ? <MenuItem onClick={handleClose}>Login</MenuItem>
+                    ? (
+                        <div>
+                            <MenuItem onClick={handleClose}>Log in</MenuItem>
+                            <MenuItem onClick={handleClose}>Sign up</MenuItem>
+                        </div>
+                    )
                     : <MenuItem onClick={handleClose}>Logout</MenuItem>}
             </Menu>
             <AddResultModal
@@ -93,6 +102,7 @@ export default function LongMenu({
                 setPlayerData={setPlayerData}
                 setRecentGames={setRecentGames}
                 handleEloError={handleEloError}
+                user={user}
             />
             <AddSportModal
                 open={addSportModalOpen}
@@ -102,6 +112,7 @@ export default function LongMenu({
                 handleEloError={handleEloError}
             />
             <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen} setUser={setUser} />
+            <SignupModal open={signupModalOpen} setOpen={setSignupModalOpen} setUser={setUser} />
         </div>
     )
 }

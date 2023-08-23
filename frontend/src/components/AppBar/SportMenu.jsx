@@ -25,13 +25,14 @@ export default function BasicMenu({ sport, sportList, setSport }) {
     return (
         <div>
             <Button
+                style={{ color: 'white' }}
                 id="basic-button"
                 aria-controls={open ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
             >
-                {sport}
+                <b>{sport}</b>
             </Button>
             <Menu
                 id="basic-menu"

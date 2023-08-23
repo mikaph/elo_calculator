@@ -35,9 +35,12 @@ async def startup():
     Base.metadata.create_all(bind=engine)
     default_user = session.query(Users).filter_by(username=secrets.username).one_or_none()
     if not default_user:
-        default_user = Users(username=secrets.username, hashed_password=secrets.hashed_password)
+        un = secrets.username
+        pw = login_helpers.hash_password(secrets.password)
+        ds = secrets.default_sport
+        default_user = Users(username=un, hashed_password=pw, is_admin=True)
         default_user.save()
-        default_sport = Sports(name=secrets.default_sport)
+        default_sport = Sports(name=ds)
         default_sport.save()
 
 
@@ -71,6 +74,16 @@ async def add_result(result: Result, token: str = Depends(login_helpers.get_toke
         return False
 
 
+@app.delete("/api/delete_result/{id}")
+async def delete_result(id: int, token: str = Depends(login_helpers.get_token)) -> bool:
+    try:
+        helpers.delete_result(id)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 @app.post("/api/add_sport/")
 async def add_sport(new_sport: NewSport, token: str = Depends(login_helpers.get_token)) -> bool:
     try:
@@ -91,3 +104,16 @@ async def login(credentials: Credentials) -> Token | bool:
     else:
         access_token = login_helpers.create_access_token(data={"sub": db_user.username})
         return Token(token=access_token, username=db_user.username)
+
+
+@app.post("/api/signup/")
+async def signup(credentials: Credentials) -> Token | bool:
+    existing_user = login_helpers.get_user(credentials.username)
+    if existing_user:
+        return False
+    else:
+        hashed_pw = login_helpers.hash_password(credentials.password)
+        new_user = Users(username=credentials.username, hashed_password=hashed_pw)
+        new_user.save()
+        access_token = login_helpers.create_access_token(data={"sub": new_user.username})
+        return Token(token=access_token, username=new_user.username)

@@ -6,11 +6,14 @@ from fastapi import HTTPException, Request
 from data_types import DBUser
 from datetime import datetime, timedelta
 import time
+import os
+from dotenv import load_dotenv
 
+load_dotenv(".env")
 
-SECRET_KEY = secrets.SECRET_KEY
-ALGORITHM = secrets.ALGORITHM
-ACCESS_TOKEN_EXPIRE_MINUTES = secrets.ACCESS_TOKEN_EXPIRE_MINUTES
+SECRET_KEY = os.environ.get("SECRET_KEY")
+ALGORITHM = os.environ.get("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -39,13 +42,17 @@ def get_token(request: Request):
 
 
 def get_user(username: str) -> DBUser | None:
-    default_user = session.query(Users).filter_by(username=username).one_or_none()
-    if default_user:
-        return DBUser(username=default_user.username, hashed_password=default_user.hashed_password)
+    user = session.query(Users).filter_by(username=username).one_or_none()
+    if user:
+        return DBUser(username=user.username, hashed_password=user.hashed_password)
 
 
-def verify_password(plain_password, hashed_password) -> bool:
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+
+def hash_password(plain_password: str) -> str:
+    return pwd_context.hash(plain_password)
 
 
 def create_access_token(data: dict):

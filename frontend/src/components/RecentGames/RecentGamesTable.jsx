@@ -6,10 +6,28 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import eloService from '../../services/elo'
 
-export default function RecentGamesTable({ recentGames }) {
+export default function RecentGamesTable({
+    sport, recentGames, setRecentGames, user, handleEloError
+}) {
     if (!recentGames) {
         return null
+    }
+
+    const handleDelete = (id) => {
+        eloService.deleteResult(id).then(() => {
+            const sportString = sport.toLowerCase().split(' ').join('_')
+            eloService.getRecentGames(sportString).then((games) => {
+                const sortedGames = games.sort((a, b) => a.time < b.time)
+                setRecentGames(sortedGames)
+            }).catch((e) => {
+                console.log(e)
+            })
+        }).catch(() => {
+            handleEloError()
+        })
     }
 
     return (
@@ -20,6 +38,8 @@ export default function RecentGamesTable({ recentGames }) {
                         <TableCell>Winner</TableCell>
                         <TableCell>Loser</TableCell>
                         <TableCell>Time</TableCell>
+                        <TableCell>Submitter</TableCell>
+                        { user && user.username === 'palisuli' ? <TableCell /> : null}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -28,6 +48,8 @@ export default function RecentGamesTable({ recentGames }) {
                             <TableCell>{game.winner}</TableCell>
                             <TableCell>{game.loser}</TableCell>
                             <TableCell>{game.time}</TableCell>
+                            <TableCell>{game.submitter}</TableCell>
+                            { user && user.username === 'palisuli' ? <TableCell><Button onClick={() => handleDelete(game.id)} variant="outlined" color="error">Remove</Button></TableCell> : null}
                         </TableRow>
                     ))}
                 </TableBody>

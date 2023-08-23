@@ -20,19 +20,22 @@ const style = {
     p: 4
 }
 
-export default function LoginModal({ open, setOpen, setUser }) {
+export default function SignupModal({ open, setOpen, setUser }) {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [password2, setPassword2] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
 
     const handleClose = () => setOpen(false)
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        const userJson = await loginService.login({
+        const userJson = await loginService.signup({
             username, password
         })
-        if (userJson) {
+        if (password !== password2) {
+            setErrorMessage("Passwords don't match!")
+        } else if (userJson) {
             window.localStorage.setItem('loggedEloCalculatorUser', JSON.stringify(userJson))
             eloService.setToken(userJson.token)
             setUser(userJson)
@@ -41,7 +44,7 @@ export default function LoginModal({ open, setOpen, setUser }) {
             setErrorMessage(null)
             window.location.reload()
         } else {
-            setErrorMessage('Wrong credentials')
+            setErrorMessage('Something went wrong')
         }
     }
 
@@ -92,6 +95,18 @@ export default function LoginModal({ open, setOpen, setUser }) {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password2"
+                                label="Password again"
+                                type="password"
+                                id="password2"
+                                value={password2}
+                                onChange={(e) => setPassword2(e.target.value)}
                             />
                             <Button
                                 type="submit"

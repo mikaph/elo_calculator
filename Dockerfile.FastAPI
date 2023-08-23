@@ -6,6 +6,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
 COPY backend /app/backend
+COPY backend/.env /app/.env
 
 WORKDIR /app/backend
 

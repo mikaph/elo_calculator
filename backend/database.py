@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, String, Column, Integer
+from sqlalchemy import create_engine, String, Column, Integer, Boolean
 from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 
@@ -38,6 +38,9 @@ class RecentGames(Base):
     winner = Column(String(30))
     loser = Column(String(30))
     time = Column(String(30))
+    submitter = Column(String(30))
+    elochange_winner = Column(Integer)
+    elochange_loser = Column(Integer)
 
     def save(self):
         session.add(self)
@@ -48,8 +51,9 @@ class Users(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
-    username = Column(String(30))
+    username = Column(String(30), unique=True)
     hashed_password = Column(String(90))
+    is_admin = Column(Boolean, default=False)
 
     def save(self):
         session.add(self)

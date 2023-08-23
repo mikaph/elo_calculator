@@ -81,7 +81,7 @@ function App() {
                         <Routes>
                             <Route path="*" element={<Navigate to="/leaderboard" replace />} />
                             <Route path="/leaderboard" element={<Leaderboard prefersDarkMode={prefersDarkMode} sport={sport} playerData={playerData} setPlayerData={setPlayerData} />} />
-                            <Route path="/recent_games" element={<RecentGames sport={sport} recentGames={recentGames} setRecentGames={setRecentGames} />} />
+                            <Route path="/recent_games" element={<RecentGames sport={sport} recentGames={recentGames} setRecentGames={setRecentGames} user={user} handleEloError={handleEloError} />} />
                         </Routes>
                     </Grid>
                 </Grid>

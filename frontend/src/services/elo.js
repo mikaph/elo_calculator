@@ -37,6 +37,14 @@ const postResult = async (resultObject) => {
     return response.data
 }
 
+const deleteResult = async (id) => {
+    const config = {
+        headers: { Authorization: token }
+    }
+    const response = await axios.delete(`${url}/delete_result/${id}`, config)
+    return response.data
+}
+
 const postSport = async (sportObject) => {
     const config = {
         headers: { Authorization: token }
@@ -69,6 +77,7 @@ export default {
     setToken,
     clearToken,
     postResult,
+    deleteResult,
     postSport,
     getLeaderboard,
     getSports,

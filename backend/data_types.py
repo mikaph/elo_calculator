@@ -19,6 +19,7 @@ class Result(BaseModel):
     sport: str
     winner: str
     loser: str
+    submitter: str
 
 
 class NewSport(BaseModel):
@@ -27,9 +28,11 @@ class NewSport(BaseModel):
 
 
 class Game(BaseModel):
+    id: int
     winner: str
     loser: str
     time: str
+    submitter: str
 
 
 class Credentials(BaseModel):

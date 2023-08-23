@@ -4,7 +4,9 @@ import CardContent from '@mui/material/CardContent'
 import RecentGamesTable from './RecentGamesTable'
 import eloService from '../../services/elo'
 
-export default function RecentGames({ sport, recentGames, setRecentGames }) {
+export default function RecentGames({
+    sport, recentGames, setRecentGames, user, handleEloError
+}) {
     React.useEffect(() => {
         const sportString = sport.toLowerCase().split(' ').join('_')
         eloService.getRecentGames(sportString).then((games) => {
@@ -18,7 +20,13 @@ export default function RecentGames({ sport, recentGames, setRecentGames }) {
     return (
         <Card>
             <CardContent>
-                <RecentGamesTable recentGames={recentGames} />
+                <RecentGamesTable
+                    sport={sport}
+                    recentGames={recentGames}
+                    setRecentGames={setRecentGames}
+                    user={user}
+                    handleEloError={handleEloError}
+                />
             </CardContent>
         </Card>
     )

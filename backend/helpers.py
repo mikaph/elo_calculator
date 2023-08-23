@@ -90,6 +90,7 @@ def add_result(result: Result):
     winner = result.winner
     loser = result.loser
     time = str(datetime.now())
+    submitter = result.submitter
 
     w = session.query(Statistics).filter_by(sport=sport, name=winner).one_or_none()
     if not w:
@@ -105,17 +106,46 @@ def add_result(result: Result):
     l.losses += 1
     l.last10 = handle_recent_loss(l.last10)
 
+    start_w_elo = w.elo
+    start_l_elo = l.elo
+
     w_elocalc = elocalculator.Player(name=winner, elo=w.elo)
     l_elocalc = elocalculator.Player(name=loser, elo=l.elo)
     elocalculator.set_new_elos(w_elocalc, l_elocalc)
     w.elo = w_elocalc.elo
     l.elo = l_elocalc.elo
 
+    diff_w_elo = w.elo - start_w_elo
+    diff_l_elo = l.elo - start_l_elo
+
     w.save()
     l.save()
 
-    recent_game = RecentGames(sport=sport, winner=winner, loser=loser, time=time)
+    recent_game = RecentGames(sport=sport, winner=winner, loser=loser, time=time, submitter=submitter, elochange_winner=diff_w_elo, elochange_loser=diff_l_elo)
     recent_game.save()
+
+
+def delete_result(id: int):
+    result = session.query(RecentGames).filter_by(id=id).first()
+
+    winner = result.winner
+    loser = result.loser
+
+    w_obj = session.query(Statistics).filter_by(name=winner).first()
+    w_obj.elo -= result.elochange_winner
+    w_obj.wins -= 1
+    w_obj.last10 = w_obj.last10[:-1]
+
+    l_obj = session.query(Statistics).filter_by(name=loser).first()
+    l_obj.elo -= result.elochange_loser
+    l_obj.losses -= 1
+    l_obj.last10 = l_obj.last10[:-1]
+
+    w_obj.save()
+    l_obj.save()
+
+    session.delete(result)
+    session.commit()
 
 
 def add_sport(new_sport: NewSport):
@@ -130,14 +160,18 @@ def get_recent_games(sport_name: str) -> list[Game]:
     maximum_amount_returned = 20
     recent_games = session.query(RecentGames).filter_by(sport=sport_name)
     for g in recent_games:
+        id = g.id
         winner = g.winner
         loser = g.loser
+        submitter = g.submitter
         time = datetime.strptime(g.time, "%Y-%m-%d %H:%M:%S.%f")
         time = datetime.strftime(time, "%d-%m-%Y %H:%M:%S")
         ret.append(Game(
+            id=id,
             winner=winner,
             loser=loser,
-            time=time
+            time=time,
+            submitter=submitter
         ))
         row_amount += 1
         if row_amount == maximum_amount_returned:
