@@ -12,7 +12,7 @@ import eloService from '../../services/elo'
 const ITEM_HEIGHT = 60
 
 export default function LongMenu({
-    sport, setPlayerData, setSport, sportList, user, setUser, handleEloError
+    sport, setPlayerData, setRecentGames, setSport, sportList, user, setUser, handleEloError
 }) {
     const navigate = useNavigate()
 
@@ -91,6 +91,7 @@ export default function LongMenu({
                 setOpen={setAddResultModalOpen}
                 sport={sport}
                 setPlayerData={setPlayerData}
+                setRecentGames={setRecentGames}
                 handleEloError={handleEloError}
             />
             <AddSportModal

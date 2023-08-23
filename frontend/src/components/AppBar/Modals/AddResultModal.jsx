@@ -21,7 +21,7 @@ const style = {
 }
 
 export default function AddResultModal({
-    open, setOpen, sport, setPlayerData, handleEloError
+    open, setOpen, sport, setPlayerData, setRecentGames, handleEloError
 }) {
     const handleClose = () => setOpen(false)
     const [winner, setWinner] = React.useState('')
@@ -51,6 +51,13 @@ export default function AddResultModal({
         eloService.postResult(resultObject).then(() => {
             eloService.getLeaderboard(sportString).then((stats) => {
                 setPlayerData(stats)
+            }).catch((e) => {
+                console.log(e)
+            })
+        }).then(() => {
+            eloService.getRecentGames(sportString).then((games) => {
+                const sortedGames = games.sort((a, b) => a.time < b.time)
+                setRecentGames(sortedGames)
             }).catch((e) => {
                 console.log(e)
             })

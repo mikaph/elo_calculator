@@ -58,7 +58,7 @@ export default function LoginModal({ open, setOpen, setUser }) {
                         <Grid container alignItems="center" spacing={2}>
                             <Grid item>
                                 <Typography component="h1" variant="h5">
-                                    Sign in
+                                    Log in
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -71,6 +71,9 @@ export default function LoginModal({ open, setOpen, setUser }) {
                                 margin="normal"
                                 required
                                 fullWidth
+                                inputProps={{
+                                    autoCapitalize: 'none'
+                                }}
                                 id="username"
                                 label="Username"
                                 name="username"

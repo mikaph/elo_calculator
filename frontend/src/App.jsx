@@ -23,6 +23,7 @@ function App() {
     }), [prefersDarkMode])
 
     const [playerData, setPlayerData] = useState([])
+    const [recentGames, setRecentGames] = React.useState([])
     const [sport, setSport] = useState('Ping pong')
     const [sportList, setSportList] = useState([])
     const [user, setUser] = useState(null)
@@ -69,6 +70,8 @@ function App() {
                             sportList={sportList}
                             setSport={setSport}
                             setPlayerData={setPlayerData}
+                            recentGames={recentGames}
+                            setRecentGames={setRecentGames}
                             user={user}
                             setUser={setUser}
                             handleEloError={handleEloError}
@@ -78,7 +81,7 @@ function App() {
                         <Routes>
                             <Route path="*" element={<Navigate to="/leaderboard" replace />} />
                             <Route path="/leaderboard" element={<Leaderboard prefersDarkMode={prefersDarkMode} sport={sport} playerData={playerData} setPlayerData={setPlayerData} />} />
-                            <Route path="/recent_games" element={<RecentGames sport={sport} />} />
+                            <Route path="/recent_games" element={<RecentGames sport={sport} recentGames={recentGames} setRecentGames={setRecentGames} />} />
                         </Routes>
                     </Grid>
                 </Grid>
