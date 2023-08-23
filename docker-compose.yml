@@ -1,0 +1,44 @@
+version: '3'
+services:
+  be:
+    image: tommipoiko/palisuli:fastapi
+    container_name: "be"
+    restart: always
+    environment:
+      PYTHON_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8000:8000
+
+  fe:
+    image: tommipoiko/palisuli:react
+    container_name: "fe"
+    restart: always
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - be
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+
+  db:
+    image: mysql:8
+    container_name: "db"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: elo_calculator_db
+      MYSQL_ROOT_HOST: "%"
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/elo_calculator_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", 'mysqladmin', 'ping', '-h', '127.0.0.1']
+      timeout: 5s
+      retries: 10
