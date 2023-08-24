@@ -61,7 +61,7 @@ export default function SignupModal({ open, setOpen, setUser }) {
                         <Grid container alignItems="center" spacing={2}>
                             <Grid item>
                                 <Typography component="h1" variant="h5">
-                                    Log In
+                                    Sign Up
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -115,7 +115,7 @@ export default function SignupModal({ open, setOpen, setUser }) {
                                 color="primary"
                                 style={{ marginTop: 16 }}
                             >
-                                Log In
+                                Sign Up
                             </Button>
                         </form>
                     </Stack>
