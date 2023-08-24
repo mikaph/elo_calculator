@@ -37,6 +37,7 @@ class Game(BaseModel):
 class Credentials(BaseModel):
     username: str
     password: str
+    secret_key: str | None
 
 
 class DBUser(BaseModel):

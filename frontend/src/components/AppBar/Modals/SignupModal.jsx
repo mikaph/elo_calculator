@@ -24,6 +24,7 @@ export default function SignupModal({ open, setOpen, setUser }) {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [password2, setPassword2] = useState('')
+    const [secretKey, setSecretKey] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
 
     const handleClose = () => setOpen(false)
@@ -31,7 +32,7 @@ export default function SignupModal({ open, setOpen, setUser }) {
     const handleSubmit = async (event) => {
         event.preventDefault()
         const userJson = await loginService.signup({
-            username, password
+            username, password, secret_key: secretKey
         })
         if (password !== password2) {
             setErrorMessage("Passwords don't match!")
@@ -107,6 +108,21 @@ export default function SignupModal({ open, setOpen, setUser }) {
                                 id="password2"
                                 value={password2}
                                 onChange={(e) => setPassword2(e.target.value)}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                inputProps={{
+                                    autoCapitalize: 'none'
+                                }}
+                                id="secretKey"
+                                label="Secret key"
+                                name="secretKey"
+                                autoFocus
+                                value={secretKey}
+                                onChange={(e) => setSecretKey(e.target.value)}
                             />
                             <Button
                                 type="submit"

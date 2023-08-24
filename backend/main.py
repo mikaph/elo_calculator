@@ -1,3 +1,4 @@
+import secrets
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from database import SessionLocal
@@ -113,6 +114,8 @@ async def login(credentials: Credentials, db: Session = Depends(get_db)) -> Toke
 async def signup(credentials: Credentials, db: Session = Depends(get_db)) -> Token | bool:
     existing_user = login_helpers.get_user(db, credentials.username)
     if existing_user:
+        return False
+    elif credentials.secret_key != secrets.secret_key:
         return False
     else:
         new_user = login_helpers.create_user(db, credentials)

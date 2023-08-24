@@ -132,13 +132,14 @@ def delete_result(db: Session, id: int):
 
     winner = result.winner
     loser = result.loser
+    sport = result.sport
 
-    w_obj = db.query(Statistics).filter_by(name=winner).first()
+    w_obj = db.query(Statistics).filter_by(name=winner, sport=sport).first()
     w_obj.elo -= result.elochange_winner
     w_obj.wins -= 1
     w_obj.last10 = w_obj.last10[:-1]
 
-    l_obj = db.query(Statistics).filter_by(name=loser).first()
+    l_obj = db.query(Statistics).filter_by(name=loser, sport=sport).first()
     l_obj.elo -= result.elochange_loser
     l_obj.losses -= 1
     l_obj.last10 = l_obj.last10[:-1]

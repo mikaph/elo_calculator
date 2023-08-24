@@ -30,7 +30,7 @@ export default function LoginModal({ open, setOpen, setUser }) {
     const handleSubmit = async (event) => {
         event.preventDefault()
         const userJson = await loginService.login({
-            username, password
+            username, password, secret_key: null
         })
         if (userJson) {
             window.localStorage.setItem('loggedEloCalculatorUser', JSON.stringify(userJson))
