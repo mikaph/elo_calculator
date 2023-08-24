@@ -9,8 +9,7 @@ export default function Leaderboard({
     prefersDarkMode, sport, playerData, setPlayerData
 }) {
     useEffect(() => {
-        const sportString = sport.toLowerCase().split(' ').join('_')
-        eloService.getLeaderboard(sportString).then((stats) => {
+        eloService.getLeaderboard(sport).then((stats) => {
             setPlayerData(stats)
         }).catch((e) => {
             console.log(e)

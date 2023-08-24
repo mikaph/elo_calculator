@@ -1,13 +1,13 @@
 from passlib.context import CryptContext
 import jwt
-from database import session, Users
-import secrets
+from database import Users
 from fastapi import HTTPException, Request
-from data_types import DBUser
+from data_types import DBUser, Credentials
 from datetime import datetime, timedelta
 import time
 import os
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
 
 load_dotenv(".env")
 
@@ -41,10 +41,21 @@ def get_token(request: Request):
     return token
 
 
-def get_user(username: str) -> DBUser | None:
-    user = session.query(Users).filter_by(username=username).one_or_none()
+def get_user(db: Session, username: str) -> DBUser | None:
+    user = db.query(Users).filter_by(username=username).one_or_none()
     if user:
         return DBUser(username=user.username, hashed_password=user.hashed_password)
+
+
+def create_user(db: Session, credentials: Credentials) -> str:
+    hashed_pw = hash_password(credentials.password)
+    if credentials.username == "palisuli":
+        new_user = Users(username=credentials.username, hashed_password=hashed_pw, is_admin=True)
+    else:
+        new_user = Users(username=credentials.username, hashed_password=hashed_pw)
+    db.add(new_user)
+    db.commit()
+    return new_user.username
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

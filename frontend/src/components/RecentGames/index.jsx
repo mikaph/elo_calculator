@@ -8,8 +8,7 @@ export default function RecentGames({
     sport, recentGames, setRecentGames, user, handleEloError
 }) {
     React.useEffect(() => {
-        const sportString = sport.toLowerCase().split(' ').join('_')
-        eloService.getRecentGames(sportString).then((games) => {
+        eloService.getRecentGames(sport).then((games) => {
             const sortedGames = games.sort((a, b) => a.time < b.time)
             setRecentGames(sortedGames)
         }).catch((e) => {

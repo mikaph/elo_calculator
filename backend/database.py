@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, String, Column, Integer, Boolean
+from sqlalchemy import create_engine, String, Column, Integer, Boolean, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 
@@ -9,8 +9,14 @@ ENV = os.environ.get("PYTHON_ENV", "development")
 if ENV == "production":
     DATABASE_URL = "mysql+pymysql://root:root@db:3306/elo_calculator_db"
 else:
-    DATABASE_URL = "sqlite:///db.sqlite"
+    DATABASE_URL = "mysql+pymysql://root:root@localhost:3306/db"
 
+base_url = "/".join(DATABASE_URL.split("/")[:-1])
+temp_engine = create_engine(base_url)
+database_name = DATABASE_URL.split("/")[-1]
+with temp_engine.connect() as conn:
+    conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {database_name};"))
+temp_engine.dispose()
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
@@ -25,10 +31,6 @@ class Players(Base):
     sport = Column(String(30))
     name = Column(String(30))
 
-    def save(self):
-        session.add(self)
-        session.commit()
-
 
 class RecentGames(Base):
     __tablename__ = "recent_games"
@@ -42,10 +44,6 @@ class RecentGames(Base):
     elochange_winner = Column(Integer)
     elochange_loser = Column(Integer)
 
-    def save(self):
-        session.add(self)
-        session.commit()
-
 
 class Users(Base):
     __tablename__ = "users"
@@ -54,10 +52,6 @@ class Users(Base):
     username = Column(String(30), unique=True)
     hashed_password = Column(String(90))
     is_admin = Column(Boolean, default=False)
-
-    def save(self):
-        session.add(self)
-        session.commit()
 
 
 class Statistics(Base):
@@ -71,17 +65,9 @@ class Statistics(Base):
     losses = Column(Integer)
     last10 = Column(String(10))
 
-    def save(self):
-        session.add(self)
-        session.commit()
-
 
 class Sports(Base):
     __tablename__ = "sports"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(30))
-
-    def save(self):
-        session.add(self)
-        session.commit()
+    name = Column(String(30), unique=True)

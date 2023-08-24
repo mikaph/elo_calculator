@@ -29,10 +29,8 @@ export default function AddResultModal({
     const [playerNames, setPlayerNames] = React.useState([])
     const [addButtonPressed, setAddButtonPressed] = React.useState(false)
 
-    const sportString = sport.toLowerCase().split(' ').join('_')
-
     React.useEffect(() => {
-        eloService.getPlayers(sportString).then((players) => {
+        eloService.getPlayers(sport).then((players) => {
             setPlayerNames(players.sort())
         }).catch((e) => {
             console.log(e)
@@ -43,27 +41,27 @@ export default function AddResultModal({
         event.preventDefault()
         setAddButtonPressed(true)
         const resultObject = {
-            sport: sportString,
+            sport,
             winner,
             loser,
             submitter: user.username
         }
 
         eloService.postResult(resultObject).then(() => {
-            eloService.getLeaderboard(sportString).then((stats) => {
+            eloService.getLeaderboard(sport).then((stats) => {
                 setPlayerData(stats)
             }).catch((e) => {
                 console.log(e)
             })
         }).then(() => {
-            eloService.getRecentGames(sportString).then((games) => {
+            eloService.getRecentGames(sport).then((games) => {
                 const sortedGames = games.sort((a, b) => a.time < b.time)
                 setRecentGames(sortedGames)
             }).catch((e) => {
                 console.log(e)
             })
         }).then(() => {
-            eloService.getPlayers(sportString).then((players) => {
+            eloService.getPlayers(sport).then((players) => {
                 setPlayerNames(players.sort())
             }).catch((e) => {
                 console.log(e)

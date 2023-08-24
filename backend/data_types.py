@@ -24,7 +24,6 @@ class Result(BaseModel):
 
 class NewSport(BaseModel):
     sport: str
-    filename: str
 
 
 class Game(BaseModel):

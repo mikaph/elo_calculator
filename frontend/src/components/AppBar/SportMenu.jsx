@@ -18,7 +18,7 @@ export default function BasicMenu({ sport, sportList, setSport }) {
     const handleClose = (event) => {
         setAnchorEl(null)
         if (event.target.innerText) {
-            setSport(event.target.innerText)
+            setSport(event.target.innerText.replace(/\r?\n|\r/g, ''))
         }
     }
 

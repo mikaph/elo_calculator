@@ -30,10 +30,8 @@ export default function AddSportModal({
     const handleAddButton = (event) => {
         event.preventDefault()
         setAddButtonPressed(true)
-        const sportString = newSport.toLowerCase().split(' ').join('_')
         const sportObject = {
-            sport: newSport,
-            filename: sportString
+            sport: newSport
         }
 
         setNewSport('')
@@ -78,6 +76,7 @@ export default function AddSportModal({
                                     } else {
                                         setNewSport(newValue)
                                     }
+                                    setAddButtonPressed(false)
                                 }}
                                 id="combo-box-new-sport"
                                 options={sportList}

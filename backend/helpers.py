@@ -1,7 +1,8 @@
 from datetime import datetime
-from database import Sports, session, Players, RecentGames, Statistics
+from database import Sports, Players, RecentGames, Statistics
 from data_types import PlayerData, Result, NewSport, Game
 import elocalculator
+from sqlalchemy.orm import Session
 
 
 def get_last_10(last10: str) -> list[int, int]:
@@ -12,9 +13,9 @@ def get_last_10(last10: str) -> list[int, int]:
     return [wins, len(last10) - wins]
 
 
-def get_leaderboard(sport_name: str) -> list[PlayerData]:
+def get_leaderboard(db: Session, sport_name: str) -> list[PlayerData]:
     ret = []
-    statistics = session.query(Statistics).filter_by(sport=sport_name)
+    statistics = db.query(Statistics).filter_by(sport=sport_name).all()
     for s in statistics:
         name = s.name
         elo = s.elo
@@ -48,17 +49,17 @@ def get_leaderboard(sport_name: str) -> list[PlayerData]:
     return ret
 
 
-def get_sports() -> list[str]:
+def get_sports(db: Session) -> list[str]:
     ret = []
-    sports = session.query(Sports)
+    sports = db.query(Sports).all()
     for s in sports:
         ret.append(s.name)
     return ret
 
 
-def get_players(sport_name: str) -> list[str]:
+def get_players(db: Session, sport_name: str) -> list[str]:
     ret = []
-    players = session.query(Players).filter_by(sport=sport_name)
+    players = db.query(Players).filter_by(sport=sport_name).all()
     for p in players:
         ret.append(p.name)
     return ret
@@ -78,31 +79,34 @@ def handle_recent_loss(last10: str) -> str:
     return last10
 
 
-def add_player(sport: str, player: str):
+def add_player(db: Session, sport: str, player: str):
     name = player
     sport = sport
     p = Players(name=name, sport=sport)
-    p.save()
+    db.add(p)
+    db.commit()
 
 
-def add_result(result: Result):
+def add_result(db: Session, result: Result):
     sport = result.sport
     winner = result.winner
     loser = result.loser
     time = str(datetime.now())
     submitter = result.submitter
 
-    w = session.query(Statistics).filter_by(sport=sport, name=winner).one_or_none()
+    w = db.query(Statistics).filter_by(sport=sport, name=winner).one_or_none()
     if not w:
         w = Statistics(sport=sport, name=winner, elo=1000, wins=0, losses=0, last10="")
-        add_player(sport, winner)
+        add_player(db, sport, winner)
+        db.add(w)
     w.wins += 1
     w.last10 = handle_recent_win(w.last10)
 
-    l = session.query(Statistics).filter_by(sport=sport, name=loser).one_or_none()
+    l = db.query(Statistics).filter_by(sport=sport, name=loser).one_or_none()
     if not l:
         l = Statistics(sport=sport, name=loser, elo=1000, wins=0, losses=0, last10="")
-        add_player(sport, loser)
+        add_player(db, sport, loser)
+        db.add(l)
     l.losses += 1
     l.last10 = handle_recent_loss(l.last10)
 
@@ -118,47 +122,43 @@ def add_result(result: Result):
     diff_w_elo = w.elo - start_w_elo
     diff_l_elo = l.elo - start_l_elo
 
-    w.save()
-    l.save()
-
     recent_game = RecentGames(sport=sport, winner=winner, loser=loser, time=time, submitter=submitter, elochange_winner=diff_w_elo, elochange_loser=diff_l_elo)
-    recent_game.save()
+    db.add(recent_game)
+    db.commit()
 
 
-def delete_result(id: int):
-    result = session.query(RecentGames).filter_by(id=id).first()
+def delete_result(db: Session, id: int):
+    result = db.query(RecentGames).filter_by(id=id).first()
 
     winner = result.winner
     loser = result.loser
 
-    w_obj = session.query(Statistics).filter_by(name=winner).first()
+    w_obj = db.query(Statistics).filter_by(name=winner).first()
     w_obj.elo -= result.elochange_winner
     w_obj.wins -= 1
     w_obj.last10 = w_obj.last10[:-1]
 
-    l_obj = session.query(Statistics).filter_by(name=loser).first()
+    l_obj = db.query(Statistics).filter_by(name=loser).first()
     l_obj.elo -= result.elochange_loser
     l_obj.losses -= 1
     l_obj.last10 = l_obj.last10[:-1]
 
-    w_obj.save()
-    l_obj.save()
-
-    session.delete(result)
-    session.commit()
+    db.delete(result)
+    db.commit()
 
 
-def add_sport(new_sport: NewSport):
+def add_sport(db: Session, new_sport: NewSport):
     sport = new_sport.sport
     s = Sports(name=sport)
-    s.save()
+    db.add(s)
+    db.commit()
 
 
-def get_recent_games(sport_name: str) -> list[Game]:
+def get_recent_games(db: Session, sport_name: str) -> list[Game]:
     ret = []
     row_amount = 0
     maximum_amount_returned = 20
-    recent_games = session.query(RecentGames).filter_by(sport=sport_name)
+    recent_games = db.query(RecentGames).filter_by(sport=sport_name).all()
     for g in recent_games:
         id = g.id
         winner = g.winner

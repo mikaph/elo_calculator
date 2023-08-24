@@ -1,10 +1,20 @@
-from fastapi import FastAPI, Depends
-from data_types import PlayerData, Result, NewSport, Game, Credentials, Token
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from database import SessionLocal
+from fastapi import FastAPI
+from data_types import PlayerData, Result, Game, Credentials, Token, NewSport
 import helpers
-from database import Base, Users, engine, session, Sports
-import secrets
+from database import Base, engine, Sports
 import login_helpers
 from fastapi.middleware.cors import CORSMiddleware
+
+Base.metadata.create_all(bind=engine)
+
+with SessionLocal() as db:
+    default_sport = db.query(Sports).filter_by(name="Ping pong").one_or_none()
+    if not default_sport:
+        db.add(Sports(name="Ping pong"))
+        db.commit()
 
 app = FastAPI()
 
@@ -29,45 +39,38 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
-@app.on_event("startup")
-async def startup():
-    Base.metadata.create_all(bind=engine)
-    default_user = session.query(Users).filter_by(username=secrets.username).one_or_none()
-    if not default_user:
-        un = secrets.username
-        pw = login_helpers.hash_password(secrets.password)
-        ds = secrets.default_sport
-        default_user = Users(username=un, hashed_password=pw, is_admin=True)
-        default_user.save()
-        default_sport = Sports(name=ds)
-        default_sport.save()
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.get("/api/leaderboard/{sport_name}")
-async def get_leaderboard(sport_name: str) -> list[PlayerData]:
-    return helpers.get_leaderboard(sport_name)
+async def get_leaderboard(sport_name: str, db: Session = Depends(get_db)) -> list[PlayerData]:
+    return helpers.get_leaderboard(db, sport_name)
 
 
 @app.get("/api/sports")
-async def get_sports() -> list[str]:
-    return helpers.get_sports()
+async def get_sports(db: Session = Depends(get_db)) -> list[str]:
+    return helpers.get_sports(db)
 
 
 @app.get("/api/players/{sport_name}")
-async def get_players(sport_name: str) -> list[str]:
-    return helpers.get_players(sport_name)
+async def get_players(sport_name: str, db: Session = Depends(get_db)) -> list[str]:
+    return helpers.get_players(db, sport_name)
 
 
 @app.get("/api/recent_games/{sport_name}")
-async def get_recent_games(sport_name: str) -> list[Game]:
-    return helpers.get_recent_games(sport_name)
+async def get_recent_games(sport_name: str, db: Session = Depends(get_db)) -> list[Game]:
+    return helpers.get_recent_games(db, sport_name)
 
 
 @app.post("/api/add_result/")
-async def add_result(result: Result, token: str = Depends(login_helpers.get_token)) -> bool:
+async def add_result(result: Result, db: Session = Depends(get_db), token: str = Depends(login_helpers.get_token)) -> bool:
     try:
-        helpers.add_result(result)
+        helpers.add_result(db, result)
         return True
     except Exception as e:
         print(e)
@@ -75,9 +78,9 @@ async def add_result(result: Result, token: str = Depends(login_helpers.get_toke
 
 
 @app.delete("/api/delete_result/{id}")
-async def delete_result(id: int, token: str = Depends(login_helpers.get_token)) -> bool:
+async def delete_result(id: int, db: Session = Depends(get_db), token: str = Depends(login_helpers.get_token)) -> bool:
     try:
-        helpers.delete_result(id)
+        helpers.delete_result(db, id)
         return True
     except Exception as e:
         print(e)
@@ -85,9 +88,9 @@ async def delete_result(id: int, token: str = Depends(login_helpers.get_token)) 
 
 
 @app.post("/api/add_sport/")
-async def add_sport(new_sport: NewSport, token: str = Depends(login_helpers.get_token)) -> bool:
+async def add_sport(new_sport: NewSport, db: Session = Depends(get_db), token: str = Depends(login_helpers.get_token)) -> bool:
     try:
-        helpers.add_sport(new_sport)
+        helpers.add_sport(db, new_sport)
         return True
     except Exception as e:
         print(e)
@@ -95,8 +98,8 @@ async def add_sport(new_sport: NewSport, token: str = Depends(login_helpers.get_
 
 
 @app.post("/api/login/")
-async def login(credentials: Credentials) -> Token | bool:
-    db_user = login_helpers.get_user(credentials.username)
+async def login(credentials: Credentials, db: Session = Depends(get_db)) -> Token | bool:
+    db_user = login_helpers.get_user(db, credentials.username)
     if not db_user:
         return False
     elif not login_helpers.verify_password(credentials.password, db_user.hashed_password):
@@ -107,13 +110,11 @@ async def login(credentials: Credentials) -> Token | bool:
 
 
 @app.post("/api/signup/")
-async def signup(credentials: Credentials) -> Token | bool:
-    existing_user = login_helpers.get_user(credentials.username)
+async def signup(credentials: Credentials, db: Session = Depends(get_db)) -> Token | bool:
+    existing_user = login_helpers.get_user(db, credentials.username)
     if existing_user:
         return False
     else:
-        hashed_pw = login_helpers.hash_password(credentials.password)
-        new_user = Users(username=credentials.username, hashed_password=hashed_pw)
-        new_user.save()
-        access_token = login_helpers.create_access_token(data={"sub": new_user.username})
-        return Token(token=access_token, username=new_user.username)
+        new_user = login_helpers.create_user(db, credentials)
+        access_token = login_helpers.create_access_token(data={"sub": new_user})
+        return Token(token=access_token, username=new_user)
