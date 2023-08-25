@@ -5,7 +5,9 @@ import CssBaseline from '@mui/material/CssBaseline'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import createTheme from '@mui/material/styles/createTheme'
-import { Route, Routes, Navigate } from 'react-router-dom'
+import {
+    Route, Routes, Navigate, useLocation
+} from 'react-router-dom'
 import Snackbar from '@mui/material/Snackbar'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
@@ -22,9 +24,11 @@ function App() {
         }
     }), [prefersDarkMode])
 
+    const location = useLocation()
+
     const [playerData, setPlayerData] = useState([])
     const [recentGames, setRecentGames] = React.useState([])
-    const [sport, setSport] = useState('Ping pong')
+    const [sport, setSport] = useState(null)
     const [sportList, setSportList] = useState([])
     const [user, setUser] = useState(null)
     const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false)
@@ -57,7 +61,20 @@ function App() {
         }).catch((e) => {
             console.log(e)
         })
-    }, [sport])
+    }, [])
+
+    useEffect(() => {
+        if (!sportList || sportList.length === 0) {
+            return
+        }
+
+        const params = new URLSearchParams(location.search)
+        const sportParam = params.get('sport')
+
+        if (sportParam && sportList.includes(sportParam)) {
+            setSport(sportParam)
+        }
+    }, [location, sportList])
 
     return (
         <ThemeProvider theme={theme}>
@@ -68,6 +85,7 @@ function App() {
                         <ButtonAppBar
                             sport={sport}
                             sportList={sportList}
+                            setSportList={setSportList}
                             setSport={setSport}
                             setPlayerData={setPlayerData}
                             recentGames={recentGames}

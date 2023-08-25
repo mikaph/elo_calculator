@@ -7,7 +7,8 @@ import LongMenu from './Menu'
 import BasicMenu from './SportMenu'
 
 export default function ButtonAppBar({
-    sport, sportList, setSport, setPlayerData, setRecentGames, user, setUser, handleEloError
+    sport, sportList, setSportList, setSport,
+    setPlayerData, setRecentGames, user, setUser, handleEloError
 }) {
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -23,6 +24,7 @@ export default function ButtonAppBar({
                         setRecentGames={setRecentGames}
                         setSport={setSport}
                         sportList={sportList}
+                        setSportList={setSportList}
                         user={user}
                         setUser={setUser}
                         handleEloError={handleEloError}

@@ -6,6 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
+import { useNavigate } from 'react-router-dom'
 import eloService from '../../../services/elo'
 
 const style = {
@@ -21,27 +22,49 @@ const style = {
 }
 
 export default function AddSportModal({
-    open, setOpen, setSport, sportList, handleEloError
+    open, setOpen, setSport, sportList, setSportList, handleEloError
 }) {
-    const handleClose = () => setOpen(false)
     const [addButtonPressed, setAddButtonPressed] = React.useState(false)
     const [newSport, setNewSport] = React.useState('')
+    const [newSportError, setNewSportError] = React.useState(null)
+
+    const navigate = useNavigate()
+
+    const handleClose = () => {
+        setOpen(false)
+        setNewSport('')
+        setNewSportError(null)
+    }
 
     const handleAddButton = (event) => {
         event.preventDefault()
-        setAddButtonPressed(true)
-        const sportObject = {
-            sport: newSport
+
+        if (!newSport) {
+            setNewSportError('No empty values allowed!')
+        } else {
+            setAddButtonPressed(true)
+            const sportObject = {
+                sport: newSport
+            }
+
+            const newPath = `${location.pathname}?sport=${newSport}`
+            navigate(newPath)
+
+            setNewSport('')
+
+            eloService.postSport(sportObject).then(() => {
+                setSport(newSport)
+                eloService.getSports().then((sports) => {
+                    const arr = sports.sort()
+                    setSportList(arr)
+                }).catch((e) => {
+                    console.log(e)
+                })
+            }).catch(() => {
+                handleEloError()
+                handleClose()
+            })
         }
-
-        setNewSport('')
-
-        eloService.postSport(sportObject).then(() => {
-            setSport(newSport)
-        }).catch(() => {
-            handleEloError()
-            handleClose()
-        })
     }
 
     return (
@@ -80,7 +103,7 @@ export default function AddSportModal({
                                 }}
                                 id="combo-box-new-sport"
                                 options={sportList}
-                                renderInput={(params) => <TextField {...params} label="New sport" />}
+                                renderInput={(params) => <TextField error={newSportError} helperText={newSportError} {...params} label="New sport" />}
                             />
                             {!addButtonPressed ? <Button type="submit" variant="contained" onClick={handleAddButton}>Add!</Button> : <Button variant="contained" disabled>New sport added!</Button>}
                         </Stack>

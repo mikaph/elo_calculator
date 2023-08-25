@@ -23,11 +23,20 @@ const style = {
 export default function AddResultModal({
     open, setOpen, sport, setPlayerData, setRecentGames, handleEloError, user
 }) {
-    const handleClose = () => setOpen(false)
     const [winner, setWinner] = React.useState('')
     const [loser, setLoser] = React.useState('')
     const [playerNames, setPlayerNames] = React.useState([])
     const [addButtonPressed, setAddButtonPressed] = React.useState(false)
+    const [winnerError, setWinnerError] = React.useState(null)
+    const [loserError, setLoserError] = React.useState(null)
+
+    const handleClose = () => {
+        setOpen(false)
+        setWinner('')
+        setLoser('')
+        setWinnerError(null)
+        setLoserError(null)
+    }
 
     React.useEffect(() => {
         eloService.getPlayers(sport).then((players) => {
@@ -39,40 +48,50 @@ export default function AddResultModal({
 
     const handleAddButton = (event) => {
         event.preventDefault()
-        setAddButtonPressed(true)
-        const resultObject = {
-            sport,
-            winner,
-            loser,
-            submitter: user.username
-        }
 
-        eloService.postResult(resultObject).then(() => {
-            eloService.getLeaderboard(sport).then((stats) => {
-                setPlayerData(stats)
-            }).catch((e) => {
-                console.log(e)
+        if (!winner && !loser) {
+            setWinnerError('No empty values allowed!')
+            setLoserError('No empty values allowed!')
+        } else if (!winner) {
+            setWinnerError('No empty values allowed!')
+        } else if (!loser) {
+            setLoserError('No empty values allowed!')
+        } else {
+            setAddButtonPressed(true)
+            const resultObject = {
+                sport,
+                winner,
+                loser,
+                submitter: user.username
+            }
+
+            eloService.postResult(resultObject).then(() => {
+                eloService.getLeaderboard(sport).then((stats) => {
+                    setPlayerData(stats)
+                }).catch((e) => {
+                    console.log(e)
+                })
+            }).then(() => {
+                eloService.getRecentGames(sport).then((games) => {
+                    const sortedGames = games.sort((a, b) => a.time < b.time)
+                    setRecentGames(sortedGames)
+                }).catch((e) => {
+                    console.log(e)
+                })
+            }).then(() => {
+                eloService.getPlayers(sport).then((players) => {
+                    setPlayerNames(players.sort())
+                }).catch((e) => {
+                    console.log(e)
+                })
+            }).finally(() => {
+                setWinner('')
+                setLoser('')
+            }).catch(() => {
+                handleEloError()
+                handleClose()
             })
-        }).then(() => {
-            eloService.getRecentGames(sport).then((games) => {
-                const sortedGames = games.sort((a, b) => a.time < b.time)
-                setRecentGames(sortedGames)
-            }).catch((e) => {
-                console.log(e)
-            })
-        }).then(() => {
-            eloService.getPlayers(sport).then((players) => {
-                setPlayerNames(players.sort())
-            }).catch((e) => {
-                console.log(e)
-            })
-        }).finally(() => {
-            setWinner('')
-            setLoser('')
-        }).catch(() => {
-            handleEloError()
-            handleClose()
-        })
+        }
     }
 
     return (
@@ -108,10 +127,11 @@ export default function AddResultModal({
                                         setWinner(newValue)
                                     }
                                     setAddButtonPressed(false)
+                                    setWinnerError(null)
                                 }}
                                 id="combo-box-winner"
                                 options={playerNames.filter((p) => p !== loser)}
-                                renderInput={(params) => <TextField {...params} label="Winner" />}
+                                renderInput={(params) => <TextField error={winnerError} helperText={winnerError} {...params} label="Winner" />}
                             />
                             <Autocomplete
                                 freeSolo
@@ -132,10 +152,11 @@ export default function AddResultModal({
                                         setLoser(newValue)
                                     }
                                     setAddButtonPressed(false)
+                                    setLoserError(null)
                                 }}
                                 id="combo-box-loser"
                                 options={playerNames.filter((p) => p !== winner)}
-                                renderInput={(params) => <TextField {...params} label="Loser" />}
+                                renderInput={(params) => <TextField error={loserError} helperText={loserError} {...params} label="Loser" />}
                             />
                             {!addButtonPressed ? <Button type="submit" variant="contained" onClick={handleAddButton}>Add!</Button> : <Button variant="contained" disabled>Result added!</Button>}
                         </Stack>

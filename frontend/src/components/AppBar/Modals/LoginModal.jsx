@@ -65,7 +65,7 @@ export default function LoginModal({ open, setOpen, setUser }) {
                                 {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                             </Grid>
                         </Grid>
-                        <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: 8 }}>
+                        <form onSubmit={handleSubmit}>
                             <TextField
                                 variant="outlined"
                                 margin="normal"

@@ -13,7 +13,8 @@ import SignupModal from './Modals/SignupModal'
 const ITEM_HEIGHT = 60
 
 export default function LongMenu({
-    sport, setPlayerData, setRecentGames, setSport, sportList, user, setUser, handleEloError
+    sport, setPlayerData, setRecentGames, setSport,
+    sportList, setSportList, user, setUser, handleEloError
 }) {
     const navigate = useNavigate()
 
@@ -84,7 +85,7 @@ export default function LongMenu({
             >
                 <MenuItem onClick={handleClose}>View leaderboard</MenuItem>
                 <MenuItem onClick={handleClose}>View recent games</MenuItem>
-                {user ? <MenuItem onClick={handleClose}>Add result</MenuItem> : null}
+                {user && sport ? <MenuItem onClick={handleClose}>Add result</MenuItem> : null}
                 {user ? <MenuItem onClick={handleClose}>Add sport</MenuItem> : null}
                 {!user
                     ? (
@@ -109,6 +110,7 @@ export default function LongMenu({
                 setOpen={setAddSportModalOpen}
                 setSport={setSport}
                 sportList={sportList}
+                setSportList={setSportList}
                 handleEloError={handleEloError}
             />
             <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen} setUser={setUser} />

@@ -128,22 +128,30 @@ def add_result(db: Session, result: Result):
 
 
 def delete_result(db: Session, id: int):
-    result = db.query(RecentGames).filter_by(id=id).first()
+    result = db.query(RecentGames).filter_by(id=id).one_or_none()
 
     winner = result.winner
     loser = result.loser
     sport = result.sport
 
-    w_obj = db.query(Statistics).filter_by(name=winner, sport=sport).first()
+    w_obj = db.query(Statistics).filter_by(name=winner, sport=sport).one_or_none()
     w_obj.elo -= result.elochange_winner
     w_obj.wins -= 1
     w_obj.last10 = w_obj.last10[:-1]
 
-    l_obj = db.query(Statistics).filter_by(name=loser, sport=sport).first()
+    l_obj = db.query(Statistics).filter_by(name=loser, sport=sport).one_or_none()
     l_obj.elo -= result.elochange_loser
     l_obj.losses -= 1
     l_obj.last10 = l_obj.last10[:-1]
 
+    if w_obj.wins + w_obj.losses == 0:
+        db.delete(w_obj)
+        w_plr = db.query(Players).filter_by(name=winner, sport=sport).one_or_none()
+        db.delete(w_plr)
+    if l_obj.wins + l_obj.losses == 0:
+        db.delete(l_obj)
+        l_plr = db.query(Players).filter_by(name=loser, sport=sport).one_or_none()
+        db.delete(l_plr)
     db.delete(result)
     db.commit()
 
