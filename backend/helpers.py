@@ -1,3 +1,4 @@
+import pytz
 from datetime import datetime
 from database import Sports, Players, RecentGames, Statistics
 from data_types import PlayerData, Result, NewSport, Game
@@ -91,7 +92,7 @@ def add_result(db: Session, result: Result):
     sport = result.sport
     winner = result.winner
     loser = result.loser
-    time = str(datetime.now())
+    time = str(datetime.now(pytz.timezone("Europe/Helsinki")))[:-6]
     submitter = result.submitter
 
     w = db.query(Statistics).filter_by(sport=sport, name=winner).one_or_none()
@@ -167,14 +168,21 @@ def get_recent_games(db: Session, sport_name: str) -> list[Game]:
     ret = []
     row_amount = 0
     maximum_amount_returned = 20
-    recent_games = db.query(RecentGames).filter_by(sport=sport_name).order_by(RecentGames.time.desc()).all()
+    recent_games = db.query(RecentGames).filter_by(sport=sport_name).all()
+
+    temp_games = []
     for g in recent_games:
+        g.time = datetime.strptime(g.time, "%Y-%m-%d %H:%M:%S.%f")
+        temp_games.append(g)
+
+    sorted_games = sorted(temp_games, key=lambda x: x.time, reverse=True)
+
+    for g in sorted_games:
         id = g.id
         winner = g.winner
         loser = g.loser
         submitter = g.submitter
-        time = datetime.strptime(g.time, "%Y-%m-%d %H:%M:%S.%f")
-        time = datetime.strftime(time, "%d-%m-%Y %H:%M:%S")
+        time = datetime.strftime(g.time, "%d-%m-%Y %H:%M:%S")
         ret.append(Game(
             id=id,
             winner=winner,

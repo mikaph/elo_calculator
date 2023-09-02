@@ -19,8 +19,7 @@ export default function RecentGamesTable({
     const handleDelete = (id) => {
         eloService.deleteResult(id).then(() => {
             eloService.getRecentGames(sport).then((games) => {
-                const sortedGames = games.sort((a, b) => a.time < b.time)
-                setRecentGames(sortedGames)
+                setRecentGames(games)
             }).catch((e) => {
                 console.log(e)
             })

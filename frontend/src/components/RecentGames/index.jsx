@@ -13,8 +13,7 @@ export default function RecentGames({
     React.useEffect(() => {
         if (sport) {
             eloService.getRecentGames(sport).then((games) => {
-                const sortedGames = games.sort((a, b) => a.time < b.time)
-                setRecentGames(sortedGames)
+                setRecentGames(games)
             }).catch((e) => {
                 console.log(e)
             })
