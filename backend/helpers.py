@@ -167,7 +167,7 @@ def get_recent_games(db: Session, sport_name: str) -> list[Game]:
     ret = []
     row_amount = 0
     maximum_amount_returned = 20
-    recent_games = db.query(RecentGames).filter_by(sport=sport_name).all()
+    recent_games = db.query(RecentGames).filter_by(sport=sport_name).order_by(RecentGames.time.desc()).all()
     for g in recent_games:
         id = g.id
         winner = g.winner
