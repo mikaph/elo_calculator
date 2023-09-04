@@ -11,10 +11,10 @@ COUNT_WINRATE = True
 class Player:
     name: str
     elo: int = 1000
+    played_games: int = 0
 
     # for debug / testing
     skill: int = 0
-    played_games: int = 0
     won_games: int = 0
 
     def __str__(self):
@@ -41,9 +41,6 @@ def get_expected_score(winner_elo: int, loser_elo: int):
     return 1/(1 + (10**((loser_elo - winner_elo)/400)))
 
 def get_K_factor(player: Player, opponent: Player):
-    if not player.played_games or not opponent.played_games:
-        return K_FACTOR
-
     if player.played_games < 10:
         return K_FACTOR*2
     elif opponent.played_games < 10:
