@@ -114,8 +114,8 @@ def add_result(db: Session, result: Result):
     start_w_elo = w.elo
     start_l_elo = l.elo
 
-    w_elocalc = elocalculator.Player(name=winner, elo=w.elo)
-    l_elocalc = elocalculator.Player(name=loser, elo=l.elo)
+    w_elocalc = elocalculator.Player(name=winner, elo=w.elo, played_games=w.wins + w.losses)
+    l_elocalc = elocalculator.Player(name=loser, elo=l.elo, played_games=l.wins + l.losses)
     elocalculator.set_new_elos(w_elocalc, l_elocalc)
     w.elo = w_elocalc.elo
     l.elo = l_elocalc.elo
