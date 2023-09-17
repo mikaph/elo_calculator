@@ -1,8 +1,8 @@
 fastapi:
-	docker buildx build --platform linux/amd64,linux/arm64 -t tommipoiko/palisuli:fastapi -f Dockerfile.FastAPI --push .
+	docker buildx build --platform linux/amd64 -t tommipoiko/palisuli:fastapi -f Dockerfile.FastAPI --push .
 
 react:
-	docker buildx build --platform linux/amd64,linux/arm64 -t tommipoiko/palisuli:react -f Dockerfile.React --push .
+	docker buildx build --platform linux/amd64 -t tommipoiko/palisuli:react -f Dockerfile.React --push .
 
 production: fastapi react
 
