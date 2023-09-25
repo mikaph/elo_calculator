@@ -29,8 +29,8 @@ export default function RecentGamesTable({
     }
 
     return (
-        <TableContainer component={Paper} style={{ width: '100%', overflowX: 'auto' }}>
-            <Table sx={{ minWidth: { xs: 'max-content', sm: '650px' } }} aria-label="simple table">
+        <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 'max-content' }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Winner</TableCell>

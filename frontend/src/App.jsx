@@ -79,7 +79,7 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Container maxWidth="lg">
+            <Container>
                 <Grid container direction="column">
                     <Grid item my={2}>
                         <ButtonAppBar
@@ -95,7 +95,7 @@ function App() {
                             handleEloError={handleEloError}
                         />
                     </Grid>
-                    <Grid item my={2}>
+                    <Grid item sx={{ width: '100%' }}>
                         <Routes>
                             <Route path="*" element={<Navigate to="/leaderboard" replace />} />
                             <Route path="/leaderboard" element={<Leaderboard prefersDarkMode={prefersDarkMode} sport={sport} playerData={playerData} setPlayerData={setPlayerData} />} />

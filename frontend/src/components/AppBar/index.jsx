@@ -11,9 +11,9 @@ export default function ButtonAppBar({
     setPlayerData, setRecentGames, user, setUser, handleEloError
 }) {
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
             <AppBar position="static">
-                <Toolbar style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                <Toolbar style={{ justifyContent: 'space-between' }}>
                     <Typography variant="h6" component="div">
                         Palisuli
                     </Typography>
