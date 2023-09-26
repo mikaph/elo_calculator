@@ -2,6 +2,7 @@ import * as React from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import { useNavigate } from 'react-router-dom'
+import Typography from '@mui/material/Typography'
 import RecentGamesTable from './RecentGamesTable'
 import eloService from '../../services/elo'
 
@@ -25,6 +26,9 @@ export default function RecentGames({
     return (
         <Card>
             <CardContent>
+                <Typography variant="h7" component="div">
+                    Recent games
+                </Typography>
                 <RecentGamesTable
                     sport={sport}
                     recentGames={recentGames}

@@ -34,7 +34,7 @@ export default function Leaderboard({
                 <Card>
                     <CardContent>
                         <Typography variant="h7" component="div">
-                            Standings
+                            Leaderboard
                         </Typography>
                         <LeaderboardTable prefersDarkMode={prefersDarkMode} rows={actualGames} />
                     </CardContent>
@@ -44,7 +44,7 @@ export default function Leaderboard({
                 <Card>
                     <CardContent>
                         <Typography variant="h7" component="div">
-                            Placement standings
+                            Placement games
                         </Typography>
                         <LeaderboardTable prefersDarkMode={prefersDarkMode} rows={placementGames} />
                     </CardContent>
