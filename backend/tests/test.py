@@ -92,9 +92,9 @@ class TestEloAlgorithm(unittest.TestCase):
         for player in players_list:
             print(player)
 
-        print(f"For some reason, winrate gives better indication of skill than the current elo algorithm.🤷")
+        print("For some reason, winrate gives better indication of skill than the current elo algorithm.🤷")
 
-        average_elo = sum([x.elo for x in players_list])/len(players_list)
+        average_elo = sum([x.elo for x in players_list]) / len(players_list)
         self.assertAlmostEqual(1000, average_elo, delta=100)
         print(f"average elo: {average_elo}")
 

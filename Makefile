@@ -11,6 +11,7 @@ build-flake8:
 
 flake8: build-flake8
 	docker run --rm -v $(shell pwd):/app:ro flake8 backend/*.py
+	docker run --rm -v $(shell pwd):/app:ro flake8 backend/*/*.py
 
 mysql:
 	docker run --rm -v $(shell pwd)/db:/var/lib/mysql --name db -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:8

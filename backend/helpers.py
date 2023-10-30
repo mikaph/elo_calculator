@@ -194,3 +194,30 @@ def get_recent_games(db: Session, sport_name: str) -> list[Game]:
         if row_amount == maximum_amount_returned:
             break
     return ret
+
+
+def get_all_games(db: Session, sport_name: str) -> list[Game]:
+    ret = []
+    recent_games = db.query(RecentGames).filter_by(sport=sport_name).all()
+
+    temp_games = []
+    for g in recent_games:
+        g.time = datetime.strptime(g.time, "%Y-%m-%d %H:%M:%S.%f")
+        temp_games.append(g)
+
+    sorted_games = sorted(temp_games, key=lambda x: x.time, reverse=True)
+
+    for g in sorted_games:
+        id = g.id
+        winner = g.winner
+        loser = g.loser
+        submitter = g.submitter
+        time = datetime.strftime(g.time, "%d-%m-%Y %H:%M:%S")
+        ret.append(Game(
+            id=id,
+            winner=winner,
+            loser=loser,
+            time=time,
+            submitter=submitter
+        ))
+    return ret

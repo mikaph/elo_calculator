@@ -11,11 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
 
-with SessionLocal() as db:
-    default_sport = db.query(Sports).filter_by(name="Ping pong").one_or_none()
+with SessionLocal() as temp_db:
+    default_sport = temp_db.query(Sports).filter_by(name="Ping pong").one_or_none()
     if not default_sport:
-        db.add(Sports(name="Ping pong"))
-        db.commit()
+        temp_db.add(Sports(name="Ping pong"))
+        temp_db.commit()
 
 app = FastAPI()
 
@@ -62,6 +62,11 @@ async def get_players(sport_name: str, db: Session = Depends(get_db)) -> list[st
 @app.get("/api/recent_games/{sport_name}")
 async def get_recent_games(sport_name: str, db: Session = Depends(get_db)) -> list[Game]:
     return helpers.get_recent_games(db, sport_name)
+
+
+@app.get("/api/all_games/{sport_name}")
+async def get_all_games(sport_name: str, db: Session = Depends(get_db)) -> list[Game]:
+    return helpers.get_all_games(db, sport_name)
 
 
 @app.post("/api/add_result/")

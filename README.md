@@ -1,7 +1,20 @@
-To run the server:
+To run the DB:
+```shell
+make mysql
+```
 
-Open a terminal window and navigate to /elo_calculator/backend and run 'uvicorn main:app --reload'. (Remember to run pip install!)
+To run the backend:
+```shell
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
 
-Open another terminal window, navigate to /elo_calculator/frontend and run 'npm start'. (Same here, run npm install!)
+To run the frontend:
+```shell
+cd frontend
+npm install
+npm start
+```
 
 This opens a browser in localhost:3000, data is fetched from localhost:8000.
