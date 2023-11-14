@@ -6,3 +6,4 @@ node_modules
 *.sqlite
 secrets.py
 db
+build

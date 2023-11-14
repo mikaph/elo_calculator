@@ -2,7 +2,7 @@ from pprint import pprint
 
 if __name__ == "__main__":
     last10 = dict()
-    with open("games_in.txt") as games_in:
+    with open("../games_in.txt") as games_in:
         for g in games_in:
             winner = g.split("-")[0].rstrip("\n")
             loser = g.split("-")[1].rstrip("\n")

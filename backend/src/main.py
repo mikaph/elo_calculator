@@ -1,13 +1,12 @@
 import secrets
 from fastapi import Depends
 from sqlalchemy.orm import Session
-from database import SessionLocal
 from fastapi import FastAPI
-from data_types import PlayerData, Result, Game, Credentials, Token, NewSport
-import helpers
-from database import Base, engine, Sports
-import login_helpers
 from fastapi.middleware.cors import CORSMiddleware
+
+from src import helpers, login_helpers
+from src.data_types import PlayerData, Game, Result, NewSport, Credentials, Token
+from src.database import Base, SessionLocal, Sports, engine
 
 Base.metadata.create_all(bind=engine)
 
@@ -44,33 +43,34 @@ def get_db():
         db.close()
 
 
-@app.get("/api/leaderboard/{sport_name}")
+@app.get("/leaderboard/{sport_name}")
 async def get_leaderboard(sport_name: str, db: Session = Depends(get_db)) -> list[PlayerData]:
     return helpers.get_leaderboard(db, sport_name)
 
 
-@app.get("/api/sports")
+@app.get("/sports")
 async def get_sports(db: Session = Depends(get_db)) -> list[str]:
     return helpers.get_sports(db)
 
 
-@app.get("/api/players/{sport_name}")
+@app.get("/players/{sport_name}")
 async def get_players(sport_name: str, db: Session = Depends(get_db)) -> list[str]:
     return helpers.get_players(db, sport_name)
 
 
-@app.get("/api/recent_games/{sport_name}")
+@app.get("/recent_games/{sport_name}")
 async def get_recent_games(sport_name: str, db: Session = Depends(get_db)) -> list[Game]:
     return helpers.get_recent_games(db, sport_name)
 
 
-@app.get("/api/all_games/{sport_name}")
+@app.get("/all_games/{sport_name}")
 async def get_all_games(sport_name: str, db: Session = Depends(get_db)) -> list[Game]:
     return helpers.get_all_games(db, sport_name)
 
 
-@app.post("/api/add_result/")
-async def add_result(result: Result, db: Session = Depends(get_db), token: str = Depends(login_helpers.get_token)) -> bool:
+@app.post("/add_result/")
+async def add_result(result: Result, db: Session = Depends(get_db),
+                     token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.add_result(db, result)
         return True
@@ -79,8 +79,9 @@ async def add_result(result: Result, db: Session = Depends(get_db), token: str =
         return False
 
 
-@app.delete("/api/delete_result/{id}")
-async def delete_result(id: int, db: Session = Depends(get_db), token: str = Depends(login_helpers.get_token)) -> bool:
+@app.delete("/delete_result/{id}")
+async def delete_result(id: int, db: Session = Depends(get_db),
+                        token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.delete_result(db, id)
         return True
@@ -89,8 +90,9 @@ async def delete_result(id: int, db: Session = Depends(get_db), token: str = Dep
         return False
 
 
-@app.post("/api/add_sport/")
-async def add_sport(new_sport: NewSport, db: Session = Depends(get_db), token: str = Depends(login_helpers.get_token)) -> bool:
+@app.post("/add_sport/")
+async def add_sport(new_sport: NewSport, db: Session = Depends(get_db),
+                    token: str = Depends(login_helpers.get_token)) -> bool:
     try:
         helpers.add_sport(db, new_sport)
         return True
@@ -99,7 +101,7 @@ async def add_sport(new_sport: NewSport, db: Session = Depends(get_db), token: s
         return False
 
 
-@app.post("/api/login/")
+@app.post("/login/")
 async def login(credentials: Credentials, db: Session = Depends(get_db)) -> Token | bool:
     db_user = login_helpers.get_user(db, credentials.username)
     if not db_user:
@@ -111,7 +113,7 @@ async def login(credentials: Credentials, db: Session = Depends(get_db)) -> Toke
         return Token(token=access_token, username=db_user.username)
 
 
-@app.post("/api/signup/")
+@app.post("/signup/")
 async def signup(credentials: Credentials, db: Session = Depends(get_db)) -> Token | bool:
     existing_user = login_helpers.get_user(db, credentials.username)
     if existing_user:

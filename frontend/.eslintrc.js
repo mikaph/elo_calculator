@@ -1,9 +1,14 @@
 module.exports = {
     env: {
         browser: true,
-        es2021: true
+        es2021: true,
+        node: true
     },
-    extends: 'airbnb',
+    extends: [
+        'airbnb',
+        'plugin:react/recommended',
+        'plugin:react-hooks/recommended'
+    ],
     overrides: [
         {
             env: {
@@ -19,25 +24,27 @@ module.exports = {
     ],
     parserOptions: {
         ecmaVersion: 'latest',
-        sourceType: 'module'
+        sourceType: 'module',
+        ecmaFeatures: {
+            jsx: true
+        }
     },
     rules: {
         indent: ['error', 4],
         'react/jsx-indent': ['error', 4],
         'react/jsx-indent-props': ['error', 4],
-        'no-restricted-globals': 'off',
-        semi: ['error', 'never'],
-        'no-alert': 'off',
-        'comma-dangle': ['error', 'never'],
-        'no-console': 'off',
-        'max-classes-per-file': 'off',
-        'linebreak-style': ['error', 'unix'],
-        'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
-        'no-trailing-spaces': 'error',
-        'arrow-spacing': ['error', { before: true, after: true }],
-        'object-curly-spacing': ['error', 'always'],
         'react/jsx-props-no-spreading': 'off',
         'react/prop-types': 'off',
-        'newline-per-chained-call': 'off'
+        'newline-per-chained-call': 'off',
+        'no-console': 'off',
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'off',
+        semi: ['error', 'never'],
+        'comma-dangle': ['error', 'never']
+    },
+    settings: {
+        react: {
+            version: 'detect'
+        }
     }
 }

@@ -1,9 +1,11 @@
-import pytz
 from datetime import datetime
-from database import Sports, Players, RecentGames, Statistics
-from data_types import PlayerData, Result, NewSport, Game
-import elocalculator
+
+import pytz
 from sqlalchemy.orm import Session
+
+from src import elocalculator
+from src.data_types import PlayerData, Result, NewSport, Game
+from src.database import Statistics, Sports, Players, RecentGames
 
 
 def get_last_10(last10: str) -> list[int, int]:
@@ -88,6 +90,15 @@ def add_player(db: Session, sport: str, player: str):
     db.commit()
 
 
+def get_player_object(db: Session, sport: str, player: str) -> Statistics:
+    player_object = db.query(Statistics).filter_by(name=player, sport=sport).one_or_none()
+    if not player_object:
+        player_object = Statistics(sport=sport, name=player, elo=1000, wins=0, losses=0, last10="")
+        add_player(db, sport, player)
+        db.add(player_object)
+    return player_object
+
+
 def add_result(db: Session, result: Result):
     sport = result.sport
     winner = result.winner
@@ -95,35 +106,31 @@ def add_result(db: Session, result: Result):
     time = str(datetime.now(pytz.timezone("Europe/Helsinki")))[:-6]
     submitter = result.submitter
 
-    w = db.query(Statistics).filter_by(sport=sport, name=winner).one_or_none()
-    if not w:
-        w = Statistics(sport=sport, name=winner, elo=1000, wins=0, losses=0, last10="")
-        add_player(db, sport, winner)
-        db.add(w)
-    w.wins += 1
-    w.last10 = handle_recent_win(w.last10)
+    winner_object = get_player_object(db, sport, winner)
+    winner_object.wins += 1
+    winner_object.last10 = handle_recent_win(winner_object.last10)
 
-    l = db.query(Statistics).filter_by(sport=sport, name=loser).one_or_none()
-    if not l:
-        l = Statistics(sport=sport, name=loser, elo=1000, wins=0, losses=0, last10="")
-        add_player(db, sport, loser)
-        db.add(l)
-    l.losses += 1
-    l.last10 = handle_recent_loss(l.last10)
+    loser_object = get_player_object(db, sport, loser)
+    loser_object.losses += 1
+    loser_object.last10 = handle_recent_loss(loser_object.last10)
 
-    start_w_elo = w.elo
-    start_l_elo = l.elo
+    start_w_elo = winner_object.elo
+    start_l_elo = loser_object.elo
 
-    w_elocalc = elocalculator.Player(name=winner, elo=w.elo, played_games=w.wins + w.losses)
-    l_elocalc = elocalculator.Player(name=loser, elo=l.elo, played_games=l.wins + l.losses)
+    w_elocalc = elocalculator.Player(name=winner, elo=winner_object.elo,
+                                     played_games=winner_object.wins + winner_object.losses)
+    l_elocalc = elocalculator.Player(name=loser, elo=loser_object.elo,
+                                     played_games=loser_object.wins + loser_object.losses)
     elocalculator.set_new_elos(w_elocalc, l_elocalc)
-    w.elo = w_elocalc.elo
-    l.elo = l_elocalc.elo
+    winner_object.elo = w_elocalc.elo
+    loser_object.elo = l_elocalc.elo
 
-    diff_w_elo = w.elo - start_w_elo
-    diff_l_elo = l.elo - start_l_elo
+    diff_w_elo = winner_object.elo - start_w_elo
+    diff_l_elo = loser_object.elo - start_l_elo
 
-    recent_game = RecentGames(sport=sport, winner=winner, loser=loser, time=time, submitter=submitter, elochange_winner=diff_w_elo, elochange_loser=diff_l_elo)
+    recent_game = RecentGames(sport=sport, winner=winner, loser=loser, time=time,
+                              submitter=submitter, elochange_winner=diff_w_elo,
+                              elochange_loser=diff_l_elo)
     db.add(recent_game)
     db.commit()
 

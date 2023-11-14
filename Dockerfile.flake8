@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 RUN pip3 install flake8
-RUN mkdir "/app"
-WORKDIR "/app"
+RUN mkdir "/backend"
+WORKDIR "/backend"
 
 ENTRYPOINT ["flake8"]

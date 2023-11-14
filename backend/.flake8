@@ -1,0 +1,4 @@
+[flake8]
+exclude = frontend
+ignore =
+max-line-length = 100

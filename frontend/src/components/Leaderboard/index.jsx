@@ -20,13 +20,13 @@ export default function Leaderboard({
             }).catch((e) => {
                 console.log(e)
             })
-            const newPath = `${location.pathname}?sport=${sport}`
+            const newPath = `${window.location.pathname}?sport=${sport}`
             navigate(newPath)
         }
     }, [sport])
 
-    const placementGames = playerData.filter((g) => g.winloss.split('-').reduce((a, b) => (!isNaN(a) && !isNaN(b) ? parseInt(a, 10) + parseInt(b, 10) : 'Invalid input')) < 10)
-    const actualGames = playerData.filter((g) => g.winloss.split('-').reduce((a, b) => (!isNaN(a) && !isNaN(b) ? parseInt(a, 10) + parseInt(b, 10) : 'Invalid input')) >= 10)
+    const placementGames = playerData.filter((g) => g.winloss.split('-').reduce((a, b) => (!Number.isNaN(a) && !Number.isNaN(b) ? parseInt(a, 10) + parseInt(b, 10) : 'Invalid input')) < 10)
+    const actualGames = playerData.filter((g) => g.winloss.split('-').reduce((a, b) => (!Number.isNaN(a) && !Number.isNaN(b) ? parseInt(a, 10) + parseInt(b, 10) : 'Invalid input')) >= 10)
 
     return (
         <Grid container direction="column">

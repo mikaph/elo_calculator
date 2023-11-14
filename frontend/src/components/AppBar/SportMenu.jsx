@@ -5,14 +5,13 @@ import MenuItem from '@mui/material/MenuItem'
 import { useNavigate } from 'react-router-dom'
 
 export default function BasicMenu({ sport, sportList, setSport }) {
+    const navigate = useNavigate()
+    const [anchorEl, setAnchorEl] = React.useState(null)
+    const open = Boolean(anchorEl)
+
     if (!sportList) {
         return null
     }
-
-    const navigate = useNavigate()
-
-    const [anchorEl, setAnchorEl] = React.useState(null)
-    const open = Boolean(anchorEl)
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -23,7 +22,7 @@ export default function BasicMenu({ sport, sportList, setSport }) {
         if (event.target.innerText) {
             const s = event.target.innerText.replace(/\r?\n|\r/g, '')
             setSport(s)
-            const newPath = `${location.pathname}?sport=${s}`
+            const newPath = `${window.location.pathname}?sport=${s}`
             navigate(newPath)
         }
     }

@@ -9,14 +9,14 @@ import Paper from '@mui/material/Paper'
 import { useTheme } from '@mui/material/styles'
 
 export default function LeaderboardTable({ prefersDarkMode, rows }) {
-    if (!rows) {
-        return null
-    }
-
     const theme = useTheme()
     const bgColor = prefersDarkMode
         ? 'rgba(30,30,30,1)'
         : theme.palette.background.default
+
+    if (!rows) {
+        return null
+    }
 
     return (
         <TableContainer component={Paper}>

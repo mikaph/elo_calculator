@@ -55,9 +55,11 @@ def get_new_elos(winner: Player, loser: Player):
     expected_score = get_expected_score(winner.elo, loser.elo)
     winner_new_elo = round(winner.elo + (1 - expected_score) * get_K_factor(winner, loser))
     loser_new_elo = round(loser.elo + (0 - 1 + expected_score) * get_K_factor(loser, winner))
-    logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo} -> {loser_new_elo})")
-    logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score} "
-                 f"loser elo change: {loser_new_elo - loser.elo} winner elo change: {winner_new_elo - winner.elo}")
+    logger.debug(f"{winner.name} ({winner.elo} -> {winner_new_elo}) beat {loser.name} ({loser.elo}"
+                 f" -> {loser_new_elo})")
+    logger.debug(f"elo difference was {winner.elo - loser.elo} expected score was: {expected_score}"
+                 f"loser elo change: {loser_new_elo - loser.elo} winner elo change:"
+                 f"{winner_new_elo - winner.elo}")
     return winner_new_elo, loser_new_elo
 
 
@@ -65,7 +67,7 @@ if __name__ == "__main__":
     reading_initial_values = True
     players = {}
 
-    with open("games_in.txt") as games_in:
+    with open("../games_in.txt") as games_in:
         for line in games_in:
             if line.startswith('*'):
                 reading_initial_values = False

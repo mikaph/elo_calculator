@@ -1,13 +1,14 @@
 from passlib.context import CryptContext
 import jwt
-from database import Users
 from fastapi import HTTPException, Request
-from data_types import DBUser, Credentials
 from datetime import datetime, timedelta
 import time
 import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+
+from src.data_types import DBUser, Credentials
+from src.database import Users
 
 load_dotenv(".env")
 

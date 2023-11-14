@@ -5,7 +5,7 @@ let url = ''
 if (ENV === 'production') {
     url = 'https://elo-calculator.northeurope.cloudapp.azure.com/api'
 } else {
-    url = 'http://localhost:8000/api'
+    url = 'http://localhost:8000'
 }
 
 const login = async (credentials) => {

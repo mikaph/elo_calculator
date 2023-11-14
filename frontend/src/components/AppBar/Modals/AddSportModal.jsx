@@ -49,7 +49,7 @@ export default function AddSportModal({
                 sport: newSport
             }
 
-            const newPath = `${location.pathname}?sport=${newSport}`
+            const newPath = `${window.location.pathname}?sport=${newSport}`
             navigate(newPath)
 
             setNewSport('')

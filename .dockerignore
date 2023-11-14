@@ -7,3 +7,4 @@ Makefile
 .gitignore
 node_modules
 db
+build

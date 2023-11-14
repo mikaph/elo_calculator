@@ -4,8 +4,7 @@ the backend.
 """
 import requests
 import json
-import concurrent.futures
-import secrets
+import src.secrets as secrets
 
 URL = "http://localhost:8000/api/add_result/"
 # URL = "https://elo-calculator.northeurope.cloudapp.azure.com/api/add_result/"

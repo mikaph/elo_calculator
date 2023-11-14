@@ -1,6 +1,6 @@
 import unittest
 import random
-from backend.elocalculator import Player, get_new_elos, set_new_elos
+from backend.src.elocalculator import Player, get_new_elos, set_new_elos
 
 
 class TestEloAlgorithm(unittest.TestCase):
@@ -11,13 +11,13 @@ class TestEloAlgorithm(unittest.TestCase):
         """
         elos_to_test = [-2000, -100, -20, 1, 0, 1, 10, 100, 2000]
 
-        for loser_old_elo in elos_to_test:
-            for winner_old_elo in elos_to_test:
-                winner_new_elo, loser_new_elo = get_new_elos(Player(name="winner", elo=winner_old_elo),
-                                                             Player(name="loser", elo=loser_old_elo))
-                self.assertLessEqual(loser_new_elo - loser_old_elo, winner_new_elo - winner_old_elo)
-                self.assertLessEqual(loser_new_elo, loser_old_elo)
-                self.assertGreaterEqual(winner_new_elo, winner_old_elo)
+        for l_old_elo in elos_to_test:
+            for w_old_elo in elos_to_test:
+                w_new_elo, l_new_elo = get_new_elos(Player(name="winner", elo=w_old_elo),
+                                                    Player(name="loser", elo=l_old_elo))
+                self.assertLessEqual(l_new_elo - l_old_elo, w_new_elo - w_old_elo)
+                self.assertLessEqual(l_new_elo, l_old_elo)
+                self.assertGreaterEqual(w_new_elo, w_old_elo)
 
     def test_elo_difference_effect(self):
         """
@@ -30,10 +30,10 @@ class TestEloAlgorithm(unittest.TestCase):
             winner_elo_changes = []
             loser_elo_changes = []
             for j in range(len(elos_to_test)):
-                winner_new_elo, loser_new_elo = get_new_elos(Player(name="winner", elo=elos_to_test[i]),
-                                                             Player(name="loser", elo=elos_to_test[j]))
-                winner_elo_changes.append(winner_new_elo - elos_to_test[i])
-                loser_elo_changes.append(loser_new_elo - elos_to_test[j])
+                w_new_elo, l_new_elo = get_new_elos(Player(name="winner", elo=elos_to_test[i]),
+                                                    Player(name="loser", elo=elos_to_test[j]))
+                winner_elo_changes.append(w_new_elo - elos_to_test[i])
+                loser_elo_changes.append(l_new_elo - elos_to_test[j])
             loser_elo_changes.reverse()
             self.assertEqual(winner_elo_changes, sorted(winner_elo_changes))
             self.assertEqual(loser_elo_changes, sorted(loser_elo_changes))
@@ -92,7 +92,8 @@ class TestEloAlgorithm(unittest.TestCase):
         for player in players_list:
             print(player)
 
-        print("For some reason, winrate gives better indication of skill than the current elo algorithm.🤷")
+        print("For some reason, winrate gives better indication of skill than the current elo"
+              "algorithm.🤷")
 
         average_elo = sum([x.elo for x in players_list]) / len(players_list)
         self.assertAlmostEqual(1000, average_elo, delta=100)

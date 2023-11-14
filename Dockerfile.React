@@ -1,12 +1,12 @@
-FROM node:20 as builder
+FROM node:20.5.1 as builder
+
+RUN npm install -g npm@9.8.0
 
 WORKDIR /app
 
-COPY frontend/package*.json ./
+COPY frontend/ ./
 
 RUN npm install
-
-COPY frontend/ ./
 
 RUN npm run build
 

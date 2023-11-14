@@ -18,7 +18,7 @@ export default function RecentGames({
             }).catch((e) => {
                 console.log(e)
             })
-            const newPath = `${location.pathname}?sport=${sport}`
+            const newPath = `${window.location.pathname}?sport=${sport}`
             navigate(newPath)
         }
     }, [sport])
