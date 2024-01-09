@@ -173,23 +173,15 @@ def add_sport(db: Session, new_sport: NewSport):
 
 def get_recent_games(db: Session, sport_name: str) -> list[Game]:
     ret = []
-    row_amount = 0
-    maximum_amount_returned = 20
-    recent_games = db.query(RecentGames).filter_by(sport=sport_name).all()
+    recent_games = (db.query(RecentGames).filter_by(sport=sport_name)
+                    .order_by(RecentGames.time.desc()).limit(20).all())
 
-    temp_games = []
     for g in recent_games:
-        g.time = datetime.strptime(g.time, "%Y-%m-%d %H:%M:%S.%f")
-        temp_games.append(g)
-
-    sorted_games = sorted(temp_games, key=lambda x: x.time, reverse=True)
-
-    for g in sorted_games:
         id = g.id
         winner = g.winner
         loser = g.loser
         submitter = g.submitter
-        time = datetime.strftime(g.time, "%d-%m-%Y %H:%M:%S")
+        time = g.time
         ret.append(Game(
             id=id,
             winner=winner,
@@ -197,18 +189,16 @@ def get_recent_games(db: Session, sport_name: str) -> list[Game]:
             time=time,
             submitter=submitter
         ))
-        row_amount += 1
-        if row_amount == maximum_amount_returned:
-            break
+
     return ret
 
 
 def get_all_games(db: Session, sport_name: str) -> list[Game]:
     ret = []
-    recent_games = db.query(RecentGames).filter_by(sport=sport_name).all()
+    all_games = db.query(RecentGames).filter_by(sport=sport_name).all()
 
     temp_games = []
-    for g in recent_games:
+    for g in all_games:
         g.time = datetime.strptime(g.time, "%Y-%m-%d %H:%M:%S.%f")
         temp_games.append(g)
 

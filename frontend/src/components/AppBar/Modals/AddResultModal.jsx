@@ -41,11 +41,13 @@ export default function AddResultModal({
     }
 
     React.useEffect(() => {
-        eloService.getPlayers(sport).then((players) => {
-            setPlayerNames(players.sort())
-        }).catch((e) => {
-            console.log(e)
-        })
+        if (sport) {
+            eloService.getPlayers(sport).then((players) => {
+                setPlayerNames(players.sort())
+            }).catch((e) => {
+                console.log(e)
+            })
+        }
     }, [sport])
 
     const handleAddButton = (event) => {
@@ -80,11 +82,13 @@ export default function AddResultModal({
                     console.log(e)
                 })
             }).then(() => {
-                eloService.getPlayers(sport).then((players) => {
-                    setPlayerNames(players.sort())
-                }).catch((e) => {
-                    console.log(e)
-                })
+                if (sport) {
+                    eloService.getPlayers(sport).then((players) => {
+                        setPlayerNames(players.sort())
+                    }).catch((e) => {
+                        console.log(e)
+                    })
+                }
             }).finally(() => {
                 setWinner('')
                 setLoser('')

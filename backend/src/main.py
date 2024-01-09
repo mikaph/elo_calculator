@@ -1,10 +1,9 @@
-import secrets
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src import helpers, login_helpers
+from src import helpers, login_helpers, secrets
 from src.data_types import PlayerData, Game, Result, NewSport, Credentials, Token
 from src.database import Base, SessionLocal, Sports, engine
 
