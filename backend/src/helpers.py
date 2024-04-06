@@ -8,7 +8,7 @@ from src.data_types import PlayerData, Result, NewSport, Game
 from src.database import Statistics, Sports, Players, RecentGames
 
 
-def get_last_10(last10: str) -> list[int, int]:
+def get_last_10(last10: str) -> list[int]:
     wins = 0
     for g in last10:
         if g == "w":
