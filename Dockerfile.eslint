@@ -1,5 +1,5 @@
-FROM node:20
-RUN npm install -g eslint
+FROM node:20-slim
+RUN npm install -g eslint@8.46.0
 RUN mkdir "/frontend"
 WORKDIR "/frontend"
 
