@@ -1,7 +1,9 @@
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, String, Column, Integer, Boolean, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 
+load_dotenv(".env")
 
 ENV = os.environ.get("PYTHON_ENV", "development")
 
@@ -9,7 +11,7 @@ ENV = os.environ.get("PYTHON_ENV", "development")
 if ENV == "production":
     DATABASE_URL = "mysql+pymysql://root:root@db:3306/elo_calculator_db"
 else:
-    DATABASE_URL = "mysql+pymysql://root:root@localhost:3306/db"
+    DATABASE_URL = "mysql+pymysql://root:root@db:3306/elo_calculator_db"
 
 base_url = "/".join(DATABASE_URL.split("/")[:-1])
 temp_engine = create_engine(base_url)

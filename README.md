@@ -18,3 +18,8 @@ npm start
 ```
 
 This opens a browser in localhost:3000, data is fetched from localhost:8000.
+
+Or run a dev container with:
+```shell
+docker compose -f docker-compose.dev.yml up --build
+```

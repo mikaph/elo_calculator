@@ -1,0 +1,57 @@
+services:
+  be:
+    image: tommipoiko/palisuli:fastapi
+    container_name: "be"
+    build:
+      context: ./backend
+      dockerfile: dev.Dockerfile
+    restart: always
+    volumes:
+      - ./backend:/app/backend
+    environment:
+      PYTHON_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+
+  fe:
+    image: tommipoiko/palisuli:react
+    container_name: "fe"
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+    restart: always
+    volumes:
+      - ./frontend:/app/frontend
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - be
+
+  db:
+    image: mysql:8
+    container_name: "db"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: elo_calculator_db
+      MYSQL_ROOT_HOST: "%"
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./elo_calculator_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", 'mysqladmin', 'ping', '-h', '127.0.0.1']
+      timeout: 5s
+      retries: 10
+
+  nginx:
+    image: nginx:1.20.1
+    container_name: "nginx"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    depends_on:
+      - fe
+      - be

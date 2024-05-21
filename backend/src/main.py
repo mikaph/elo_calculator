@@ -22,7 +22,9 @@ origins = [
     "http://localhost:80",
     "http://localhost:3000",
     "http://fe:443",
-    "http://fe:80"
+    "http://fe:80",
+    "http://nginx:80",
+    "http://nginx:443"
 ]
 
 app.add_middleware(

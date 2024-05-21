@@ -1,7 +1,6 @@
-version: '3'
 services:
   be:
-    image: tommipoiko/palisuli:fastapi
+    image: tommipoiko/palisuli:fastapi_test
     container_name: "be"
     restart: always
     environment:
@@ -9,23 +8,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - 8000:8000
 
   fe:
-    image: tommipoiko/palisuli:react
+    image: tommipoiko/palisuli:react_test
     container_name: "fe"
     restart: always
     environment:
       NODE_ENV: production
     depends_on:
       - be
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - ./certbot-www:/var/www/certbot
 
   db:
     image: mysql:8
@@ -43,6 +34,20 @@ services:
       test: ["CMD", 'mysqladmin', 'ping', '-h', '127.0.0.1']
       timeout: 5s
       retries: 10
+
+  nginx:
+    image: nginx:1.20.1
+    container_name: "nginx"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt
+      - ./certbot-www:/var/www/certbot
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - fe
+      - be
 
   certbot:
     image: certbot/certbot

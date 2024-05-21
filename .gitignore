@@ -7,3 +7,4 @@ node_modules
 secrets.py
 db
 build
+elo_calculator_db

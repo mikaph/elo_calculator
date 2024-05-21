@@ -2,10 +2,10 @@ silence-docker:
 	export DOCKER_CLI_HINTS=false
 
 fastapi:
-	docker buildx build --platform linux/amd64 -t tommipoiko/palisuli:fastapi -f Dockerfile.FastAPI --push .
+	docker buildx build --platform linux/amd64 -t tommipoiko/palisuli:fastapi_test -f backend/Dockerfile --push backend
 
 react:
-	docker buildx build --platform linux/amd64 -t tommipoiko/palisuli:react -f Dockerfile.React --push .
+	docker buildx build --platform linux/amd64 -t tommipoiko/palisuli:react_test -f frontend/Dockerfile --push frontend
 
 production: flake8 eslint fastapi react
 
