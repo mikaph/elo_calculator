@@ -51,7 +51,7 @@ services:
     volumes:
       - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - 8080:80
+      - 80:80
     depends_on:
       - fe
       - be
