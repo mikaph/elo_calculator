@@ -1,6 +1,6 @@
 services:
   be:
-    image: tommipoiko/palisuli:fastapi_test
+    image: tommipoiko/palisuli:fastapi
     container_name: "be"
     restart: always
     environment:
@@ -10,7 +10,7 @@ services:
         condition: service_healthy
 
   fe:
-    image: tommipoiko/palisuli:react_test
+    image: tommipoiko/palisuli:react
     container_name: "fe"
     restart: always
     environment:
