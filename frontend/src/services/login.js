@@ -3,8 +3,7 @@ import axios from 'axios'
 const ENV = process.env.NODE_ENV
 let url = ''
 if (ENV === 'production') {
-    // url = 'https://elo-calculator.northeurope.cloudapp.azure.com/api'
-    url = 'https://79.76.51.217/api'
+    url = 'https://elo-calculator.northeurope.cloudapp.azure.com/api'
 } else {
     url = 'http://localhost/api'
 }
